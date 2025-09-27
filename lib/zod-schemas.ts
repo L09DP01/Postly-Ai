@@ -25,7 +25,7 @@ export const IntentSchema = z.object({
   ]).optional(),
   language: z.enum(["fr", "en", "es", "it"]).default("fr"),
   audience: z.string().optional(),
-  constraints: ConstraintsSchema.optional(),
+  constraints: ConstraintsSchema.optional().nullable(),
 });
 
 // Schéma pour la requête de parsing d'intent
