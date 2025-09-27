@@ -70,35 +70,93 @@ export async function POST(req: Request) {
 }
 
 /**
- * Construit le contexte complet pour le Prompt Builder
+ * Construit le contexte complet pour le Prompt Builder adapté à la langue
  */
 function buildContextPrompt(intent: any, brief: string): string {
   const context = [];
+  const lang = intent.language || 'fr';
   
-  context.push(`BRIEF UTILISATEUR: "${brief}"`);
-  context.push(`\nINTENTION ANALYSÉE:`);
+  // Labels multilingues
+  const labels = {
+    fr: {
+      briefLabel: "BRIEF UTILISATEUR:",
+      intentLabel: "INTENTION ANALYSÉE:",
+      platform: "Plateforme:",
+      sector: "Secteur:",
+      objective: "Objectif:",
+      tone: "Ton:",
+      language: "Langue:",
+      audience: "Audience:",
+      constraints: "CONTRAINTES:",
+      maxHashtags: "Maximum hashtags:",
+      emojisAllowed: "Emojis autorisés:",
+      charLimit: "Limite caractères:",
+      yes: "Oui",
+      no: "Non",
+      instruction: "CONSTRUIRE UN PROMPT OPTIMISÉ pour le générateur final qui devra créer 3 variantes complètes et engageantes."
+    },
+    en: {
+      briefLabel: "USER BRIEF:",
+      intentLabel: "ANALYZED INTENTION:",
+      platform: "Platform:",
+      sector: "Industry:",
+      objective: "Objective:",
+      tone: "Tone:",
+      language: "Language:",
+      audience: "Audience:",
+      constraints: "CONSTRAINTS:",
+      maxHashtags: "Maximum hashtags:",
+      emojisAllowed: "Emojis allowed:",
+      charLimit: "Character limit:",
+      yes: "Yes",
+      no: "No",
+      instruction: "BUILD AN OPTIMIZED PROMPT for the final generator that will create 3 complete and engaging variants."
+    },
+    es: {
+      briefLabel: "BRIEF DEL USUARIO:",
+      intentLabel: "INTENCIÓN ANALIZADA:",
+      platform: "Plataforma:",
+      sector: "Sector:",
+      objective: "Objetivo:",
+      tone: "Tono:",
+      language: "Idioma:",
+      audience: "Audiencia:",
+      constraints: "RESTRICCIONES:",
+      maxHashtags: "Máximo hashtags:",
+      emojisAllowed: "Emojis permitidos:",
+      charLimit: "Límite de caracteres:",
+      yes: "Sí",
+      no: "No",
+      instruction: "CONSTRUIR UN PROMPT OPTIMIZADO para el generador final que creará 3 variantes completas y atractivas."
+    }
+  };
   
-  if (intent.platform) context.push(`- Plateforme: ${intent.platform}`);
-  if (intent.industry) context.push(`- Secteur: ${intent.industry}`);
-  if (intent.objective) context.push(`- Objectif: ${intent.objective}`);
-  if (intent.tone) context.push(`- Ton: ${intent.tone}`);
-  if (intent.language) context.push(`- Langue: ${intent.language}`);
-  if (intent.audience) context.push(`- Audience: ${intent.audience}`);
+  const l = labels[lang as keyof typeof labels] || labels.fr;
+  
+  context.push(`${l.briefLabel} "${brief}"`);
+  context.push(`\n${l.intentLabel}`);
+  
+  if (intent.platform) context.push(`- ${l.platform} ${intent.platform}`);
+  if (intent.industry) context.push(`- ${l.sector} ${intent.industry}`);
+  if (intent.objective) context.push(`- ${l.objective} ${intent.objective}`);
+  if (intent.tone) context.push(`- ${l.tone} ${intent.tone}`);
+  if (intent.language) context.push(`- ${l.language} ${intent.language}`);
+  if (intent.audience) context.push(`- ${l.audience} ${intent.audience}`);
   
   if (intent.constraints) {
-    context.push(`\nCONTRAINTES:`);
+    context.push(`\n${l.constraints}`);
     if (intent.constraints.max_hashtags) {
-      context.push(`- Maximum hashtags: ${intent.constraints.max_hashtags}`);
+      context.push(`- ${l.maxHashtags} ${intent.constraints.max_hashtags}`);
     }
     if (intent.constraints.emoji_ok !== undefined) {
-      context.push(`- Emojis autorisés: ${intent.constraints.emoji_ok ? "Oui" : "Non"}`);
+      context.push(`- ${l.emojisAllowed} ${intent.constraints.emoji_ok ? l.yes : l.no}`);
     }
     if (intent.constraints.max_chars) {
-      context.push(`- Limite caractères: ${intent.constraints.max_chars}`);
+      context.push(`- ${l.charLimit} ${intent.constraints.max_chars}`);
     }
   }
   
-  context.push(`\nCONSTRUIRE UN PROMPT OPTIMISÉ pour le générateur final qui devra créer 3 variantes complètes et engageantes.`);
+  context.push(`\n${l.instruction}`);
   
   return context.join('\n');
 }

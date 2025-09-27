@@ -4,7 +4,7 @@ import { z } from "zod";
 export const ConstraintsSchema = z.object({
   max_hashtags: z.number().min(0).max(5).default(3),
   emoji_ok: z.boolean().default(true),
-  max_chars: z.number().optional(),
+  max_chars: z.number().nullable().optional(),
 });
 
 // Schéma pour l'intent parsé
