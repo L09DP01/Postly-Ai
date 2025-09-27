@@ -20,6 +20,8 @@ export default function LoginPage() {
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
+    console.log("Login attempt:", { email, hasPassword: !!password });
+
     try {
       const res = await signIn("credentials", {
         redirect: false,
@@ -27,12 +29,23 @@ export default function LoginPage() {
         password,
       });
 
+      console.log("SignIn result:", res);
+
       if (res?.error) {
+        console.error("SignIn error:", res.error);
         setError("Identifiants invalides");
+      } else if (res?.ok) {
+        console.log("Login successful, redirecting...");
+        // Attendre un peu pour que la session soit mise à jour
+        setTimeout(() => {
+          router.push("/dashboard/generate");
+          router.refresh(); // Force refresh de la page
+        }, 100);
       } else {
-        router.push("/dashboard/generate");
+        setError("Erreur de connexion inattendue");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError("Une erreur est survenue");
     } finally {
       setLoading(false);

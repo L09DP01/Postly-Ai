@@ -15,21 +15,36 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
+          console.log("Auth attempt:", { email: credentials?.email });
+          
           const parsed = z.object({ 
             email: z.string().email(), 
             password: z.string().min(6) 
           }).safeParse(credentials);
           
-          if (!parsed.success) return null;
+          if (!parsed.success) {
+            console.log("Auth validation failed:", parsed.error);
+            return null;
+          }
           
           const user = await prisma.user.findUnique({ 
             where: { email: parsed.data.email } 
           });
           
-          if (!user) return null;
+          if (!user) {
+            console.log("User not found:", parsed.data.email);
+            return null;
+          }
           
           const ok = await bcrypt.compare(parsed.data.password, user.passwordHash);
-          return ok ? { id: user.id, email: user.email } : null;
+          
+          if (ok) {
+            console.log("Auth successful for:", user.email);
+            return { id: user.id, email: user.email };
+          } else {
+            console.log("Password mismatch for:", user.email);
+            return null;
+          }
         } catch (error) {
           console.error("Auth authorize error:", error);
           return null;
@@ -43,6 +58,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        console.log("JWT callback - user:", user);
         token.id = user.id;
         token.email = user.email;
       }
@@ -50,6 +66,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
+        console.log("Session callback - token:", token);
         session.user = {
           ...session.user,
           id: token.id as string,
@@ -58,6 +75,7 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     }
-  }
+  },
+  debug: true // Activer le debug en développement
 };
 
