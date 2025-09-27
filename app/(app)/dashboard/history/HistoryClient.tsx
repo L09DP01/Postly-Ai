@@ -1,8 +1,8 @@
-"use client";
+&quot;use client&quot;;
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/Card";
-import Link from "next/link";
+import { useState, useEffect } from &quot;react&quot;;
+import { Card } from &quot;@/components/ui/Card&quot;;
+import Link from &quot;next/link&quot;;
 
 interface Generation {
   id: string;
@@ -29,25 +29,25 @@ export default function HistoryClient() {
     const fetchData = async () => {
       try {
         // Fetch generations
-        const generationsResponse = await fetch('/api/history');
+        const generationsResponse = await fetch(&apos;/api/history&apos;);
         if (generationsResponse.ok) {
           const generationsData = await generationsResponse.json();
           setGenerations(generationsData.generations || []);
         }
 
         // Fetch quota info
-        const quotaResponse = await fetch('/api/quota');
+        const quotaResponse = await fetch(&apos;/api/quota&apos;);
         if (quotaResponse.ok) {
           const quotaData = await quotaResponse.json();
           setQuotaInfo({
-            plan: quotaData.plan || 'free',
+            plan: quotaData.plan || &apos;free&apos;,
             total: quotaData.total || 0,
             used: quotaData.used || 0,
             remaining: quotaData.remaining || 0
           });
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des données:', error);
+        console.error(&apos;Erreur lors du chargement des données:, error);
       } finally {
         setLoading(false);
       }
@@ -58,89 +58,89 @@ export default function HistoryClient() {
 
   if (loading) {
     return (
-      <div className="space-y-8 p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div className=&quot;space-y-8 p-6&quot;>
+        <div className=&quot;animate-pulse&quot;>
+          <div className=&quot;h-8 bg-gray-200 rounded w-1/3 mb-4&quot;></div>
+          <div className=&quot;h-4 bg-gray-200 rounded w-1/2&quot;></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className=&quot;space-y-8&quot;>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className=&quot;flex items-center justify-between&quot;>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Historique</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className=&quot;text-3xl font-bold text-gray-900&quot;>Historique</h1>
+          <p className=&quot;mt-2 text-gray-600&quot;>
             Retrouvez toutes vos générations de posts précédentes
           </p>
         </div>
         <Link
-          href="/dashboard/generate"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center space-x-2"
+          href=&quot;/dashboard/generate&quot;
+          className=&quot;bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center space-x-2&quot;
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <svg className=&quot;w-4 h-4&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;>
+            <path strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot; strokeWidth={2} d=&quot;M12 6v6m0 0v6m0-6h6m-6 0H6&quot; />
           </svg>
           <span>Nouveau post</span>
         </Link>
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-blue-600">{generations.length}</div>
-          <div className="text-sm text-gray-600">Posts générés</div>
+      <div className=&quot;grid grid-cols-1 md:grid-cols-3 gap-6&quot;>
+        <Card className=&quot;p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-blue-600&quot;>{generations.length}</div>
+          <div className=&quot;text-sm text-gray-600&quot;>Posts générés</div>
         </Card>
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-green-600">{quotaInfo?.remaining || 0}</div>
-          <div className="text-sm text-gray-600">Crédits restants</div>
+        <Card className=&quot;p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-green-600&quot;>{quotaInfo?.remaining || 0}</div>
+          <div className=&quot;text-sm text-gray-600&quot;>Crédits restants</div>
         </Card>
-        <Card className="p-6 text-center">
-          <div className="text-3xl font-bold text-purple-600">{quotaInfo?.plan === 'pro' ? 'Pro' : 'Gratuit'}</div>
-          <div className="text-sm text-gray-600">Plan actuel</div>
+        <Card className=&quot;p-6 text-center&quot;>
+          <div className=&quot;text-3xl font-bold text-purple-600&quot;>{quotaInfo?.plan === &apos;pro&apos; ? &apos;Pro&apos; : &apos;Gratuit}</div>
+          <div className=&quot;text-sm text-gray-600&quot;>Plan actuel</div>
         </Card>
       </div>
 
       {/* Generations List */}
       {generations.length > 0 ? (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Générations récentes</h2>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div className=&quot;space-y-4&quot;>
+          <h2 className=&quot;text-xl font-semibold text-gray-900&quot;>Générations récentes</h2>
+          <div className=&quot;bg-white rounded-lg border border-gray-200 overflow-hidden&quot;>
             {generations.map((generation, index) => (
               <div key={generation.id} className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${index === generations.length - 1 ? 'border-b-0' : ''}`}>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      {generation.platform && <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">#{generation.platform}</span>}
-                      <span className="text-xs text-gray-500">
-                        {new Date(generation.createdAt).toLocaleDateString('fr-FR', { 
-                          year: 'numeric', 
-                          month: 'short', 
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
+                <div className=&quot;flex justify-between items-start&quot;>
+                  <div className=&quot;flex-1 min-w-0&quot;>
+                    <div className=&quot;flex items-center space-x-2 mb-1&quot;>
+                      {generation.platform && <span className=&quot;inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full&quot;>#{generation.platform}</span>}
+                      <span className=&quot;text-xs text-gray-500&quot;>
+                        {new Date(generation.createdAt).toLocaleDateString(&apos;fr-FR&apos;, { 
+                          year: &apos;numeric&apos;, 
+                          month: &apos;short&apos;, 
+                          day: &apos;numeric&apos;,
+                          hour: &apos;2-digit&apos;,
+                          minute: &apos;2-digit
                         })}
                       </span>
-                      {generation.usageTokens && <span className="text-xs text-gray-400">({generation.usageTokens} tokens)</span>}
+                      {generation.usageTokens && <span className=&quot;text-xs text-gray-400&quot;>({generation.usageTokens} tokens)</span>}
                     </div>
-                    <p className="text-sm text-gray-700 truncate">
-                      {generation.brief || "Aucun brief saisi"}
-                      {generation.brief && generation.brief.length > 100 && "..."}
+                    <p className=&quot;text-sm text-gray-700 truncate&quot;>
+                      {generation.brief || &quot;Aucun brief saisi&quot;}
+                      {generation.brief && generation.brief.length > 100 && &quot;...&quot;}
                     </p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500">
-                        {Array.isArray(generation.variants) && generation.variants.length > 0 ? `${generation.variants.length} variantes générées` : "Aucune variante"}
+                    <div className=&quot;flex items-center justify-between mt-2&quot;>
+                      <span className=&quot;text-xs text-gray-500&quot;>
+                        {Array.isArray(generation.variants) && generation.variants.length > 0 ? `${generation.variants.length} variantes générées` : &quot;Aucune variante&quot;}
                       </span>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-xs text-gray-400 cursor-pointer hover:text-gray-600">
+                      <div className=&quot;flex items-center space-x-3&quot;>
+                        <span className=&quot;text-xs text-gray-400 cursor-pointer hover:text-gray-600&quot;>
                           👁️ Voir détails
                         </span>
                         <Link
-                          href="/dashboard/generate"
-                          className="text-blue-600 hover:text-blue-800 text-xs hover:underline"
+                          href=&quot;/dashboard/generate&quot;
+                          className=&quot;text-blue-600 hover:text-blue-800 text-xs hover:underline&quot;
                         >
                           ✨ Réutiliser
                         </Link>
@@ -153,22 +153,22 @@ export default function HistoryClient() {
           </div>
         </div>
       ) : (
-        <Card className="p-12 text-center">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <Card className=&quot;p-12 text-center&quot;>
+          <div className=&quot;mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4&quot;>
+            <svg className=&quot;w-8 h-8 text-gray-400&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;>
+              <path strokeLinecap=&quot;round&quot; strokeLinejoin=&quot;round&quot; strokeWidth={2} d=&quot;M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z&quot; />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun historique disponible</h3>
-          <p className="text-gray-600 mb-4">
+          <h3 className=&quot;text-lg font-medium text-gray-900 mb-2&quot;>Aucun historique disponible</h3>
+          <p className=&quot;text-gray-600 mb-4&quot;>
             Commencez par générer votre premier post pour voir votre historique.
           </p>
           <Link
-            href="/dashboard/generate"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2"
+            href=&quot;/dashboard/generate&quot;
+            className=&quot;bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2&quot;
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            <svg className=&quot;w-4 h-4&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; viewBox=&quot;0 0 24 24&quot;>
+              <path strokeLinecap=&quot;round&quot; strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
             <span>Générer mon premier post</span>
           </Link>

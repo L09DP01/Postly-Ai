@@ -1,39 +1,39 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { Providers } from "@/components/providers";
-import "./globals.css";
+import type { Metadata } from &quot;next&quot;;
+import { Inter } from &quot;next/font/google&quot;;
+import { Providers } from &quot;@/components/providers&quot;;
+import &quot;./globals.css&quot;;
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: [&quot;latin&quot;] });
 
 export const metadata: Metadata = {
-  title: "Postly AI — Générateur de posts IA",
-  description: "Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).",
-  keywords: ["posts", "réseaux sociaux", "IA", "marketing", "Instagram", "Facebook", "TikTok"],
-  authors: [{ name: "Postly AI" }],
-  creator: "Postly AI",
-  publisher: "Postly AI",
+  title: &quot;Postly AI — Générateur de posts IA&quot;,
+  description: &quot;Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).&quot;,
+  keywords: [&quot;posts&quot;, &quot;réseaux sociaux&quot;, &quot;IA&quot;, &quot;marketing&quot;, &quot;Instagram&quot;, &quot;Facebook&quot;, &quot;TikTok&quot;],
+  authors: [{ name: &quot;Postly AI&quot; }],
+  creator: &quot;Postly AI&quot;,
+  publisher: &quot;Postly AI&quot;,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://postly-ai.vercel.app"),
+  metadataBase: new URL(&quot;https://postly-ai.vercel.app&quot;),
   alternates: {
-    canonical: "/",
+    canonical: &quot;/&quot;,
   },
   openGraph: {
-    type: "website",
-    locale: "fr_FR",
-    url: "/",
-    title: "Postly AI — Générateur de posts IA",
-    description: "Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).",
-    siteName: "Postly AI",
+    type: &quot;website&quot;,
+    locale: &quot;fr_FR&quot;,
+    url: &quot;/&quot;,
+    title: &quot;Postly AI — Générateur de posts IA&quot;,
+    description: &quot;Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).&quot;,
+    siteName: &quot;Postly AI&quot;,
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Postly AI — Générateur de posts IA",
-    description: "Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).",
-    creator: "@postlyai",
+    card: &quot;summary_large_image&quot;,
+    title: &quot;Postly AI — Générateur de posts IA&quot;,
+    description: &quot;Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA).&quot;,
+    creator: &quot;@postlyai&quot;,
   },
   robots: {
     index: true,
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
+      &quot;max-video-preview&quot;: -1,
+      &quot;max-image-preview&quot;: &quot;large&quot;,
       "max-snippet": -1,
     },
   },

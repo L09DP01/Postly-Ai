@@ -1,46 +1,46 @@
-"use client";
-import Link from "next/link";
-import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import logo from "@/public/logo.png"
+&quot;use client&quot;;
+import Link from &quot;next/link&quot;;
+import { useState } from &quot;react&quot;;
+import { useSession, signOut } from &quot;next-auth/react&quot;;
+import logo from &quot;@/public/logo.png&quot;
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-blue-200 bg-blue-100 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <header className=&quot;sticky top-0 z-40 w-full border-b border-blue-200 bg-blue-100 backdrop-blur&quot;>
+      <nav className=&quot;mx-auto flex max-w-6xl items-center justify-between px-4 py-3&quot;>
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href=&quot;/&quot; className=&quot;flex items-center space-x-2&quot;>
           <img 
             src={logo.src} 
-            alt="Postly AI" 
-            className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg object-contain"
+            alt=&quot;Postly AI&quot; 
+            className=&quot;h-10 w-10 sm:h-10 sm:w-10 rounded-lg object-contain&quot;
           />
-          <span className="font-bold text-lg sm:text-xl text-gray-800">Postly AI</span>
+          <span className=&quot;font-bold text-lg sm:text-xl text-gray-800&quot;>Postly AI</span>
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-4 text-sm">
-          <Link href="/pricing" className="text-blue-800 hover:underline hover:text-blue-600">Tarifs</Link>
-          <Link href="/contact" className="text-blue-800 hover:underline hover:text-blue-600">Contact</Link>
+        <div className=&quot;hidden md:flex items-center gap-4 text-sm&quot;>
+          <Link href=&quot;/pricing&quot; className=&quot;text-blue-800 hover:underline hover:text-blue-600&quot;>Tarifs</Link>
+          <Link href=&quot;/contact&quot; className=&quot;text-blue-800 hover:underline hover:text-blue-600&quot;>Contact</Link>
           
           {session ? (
             // Utilisateur connecté - Affichage icône profil + options
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="flex items-center space-x-2 text-blue-800 hover:text-blue-600 transition-colors">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+            <div className=&quot;flex items-center gap-3&quot;>
+              <Link href=&quot;/dashboard&quot; className=&quot;flex items-center space-x-2 text-blue-800 hover:text-blue-600 transition-colors&quot;>
+                <div className=&quot;w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center&quot;>
+                  <svg className=&quot;w-4 h-4 text-white&quot; fill=&quot;currentColor&quot; viewBox=&quot;0 0 20 20&quot;>
+                    <path fillRule=&quot;evenodd&quot; d=&quot;M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z&quot; clipRule=&quot;evenodd&quot;></path>
                   </svg>
                 </div>
-                <span className="hidden lg:inline font-medium">{session.user?.email?.split('@')[0] || 'Profil'}</span>
+                <span className=&quot;hidden lg:inline font-medium&quot;>{session.user?.email?.split(&apos;@&apos;)[0] || &apos;Profil}</span>
               </Link>
               <button 
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="hidden lg:block text-gray-500 hover:text-red-500 text-xs font-medium transition-colors"
-                title="Se déconnecter"
+                onClick={() => signOut({ callbackUrl: &apos;/ })}
+                className=&quot;hidden lg:block text-gray-500 hover:text-red-500 text-xs font-medium transition-colors&quot;
+                title=&quot;Se déconnecter&quot;
               >
                 Déconnexion
               </button>
@@ -48,8 +48,8 @@ export default function Navbar() {
           ) : (
             // Utilisateur non connecté - Boutons connexion/inscription
             <>
-              <Link href="/auth/login" className="rounded-xl border border-blue-800 text-blue-800 px-3 py-1.5 hover:bg-blue-800 hover:text-white">Connexion</Link>
-              <Link href="/auth/register" className="rounded-xl bg-black px-3 py-1.5 text-white hover:opacity-90">Commencer</Link>
+              <Link href=&quot;/auth/login&quot; className=&quot;rounded-xl border border-blue-800 text-blue-800 px-3 py-1.5 hover:bg-blue-800 hover:text-white&quot;>Connexion</Link>
+              <Link href=&quot;/auth/register&quot; className=&quot;rounded-xl bg-black px-3 py-1.5 text-white hover:opacity-90&quot;>Commencer</Link>
             </>
           )}
         </div>
@@ -57,7 +57,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button 
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1"
+          className=&quot;md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1&quot;
         >
           <span className={`block h-1 w-6 bg-gray-800 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
           <span className={`block h-1 w-6 bg-gray-800 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
@@ -67,18 +67,18 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden px-4 pb-4 bg-blue-100">
-          <div className="flex flex-col space-y-4 text-sm">
+        <div className=&quot;md:hidden px-4 pb-4 bg-blue-100&quot;>
+          <div className=&quot;flex flex-col space-y-4 text-sm&quot;>
             <Link 
-              href="/pricing" 
-              className="text-blue-800 hover:text-blue-600 py-2 transition-colors"
+              href=&quot;/pricing&quot; 
+              className=&quot;text-blue-800 hover:text-blue-600 py-2 transition-colors&quot;
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Tarifs
             </Link>
             <Link 
-              href="/contact" 
-              className="text-blue-800 hover:text-blue-600 py-2 transition-colors"
+              href=&quot;/contact&quot; 
+              className=&quot;text-blue-800 hover:text-blue-600 py-2 transition-colors&quot;
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Contact
@@ -88,29 +88,29 @@ export default function Navbar() {
               // Utilisateur connecté - Options du menu mobile
               <>
                 <Link 
-                  href="/dashboard" 
-                  className="flex items-center space-x-2 text-blue-800 hover:text-blue-600 py-2 transition-colors"
+                  href=&quot;/dashboard&quot; 
+                  className=&quot;flex items-center space-x-2 text-blue-800 hover:text-blue-600 py-2 transition-colors&quot;
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                  <div className=&quot;w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center&quot;>
+                    <svg className=&quot;w-3 h-3 text-white&quot; fill=&quot;currentColor&quot; viewBox=&quot;0 0 20 20&quot;>
+                      <path fillRule=&quot;evenodd&quot; d=&quot;M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z&quot; clipRule=&quot;evenodd&quot;></path>
                     </svg>
                   </div>
                   <span>Tableau de bord</span>
                 </Link>
                 <Link 
-                  href="/dashboard/billing" 
-                  className="text-blue-800 hover:text-blue-600 py-2 transition-colors"
+                  href=&quot;/dashboard/billing&quot; 
+                  className=&quot;text-blue-800 hover:text-blue-600 py-2 transition-colors&quot;
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Facturation
                 </Link>
                 <button 
-                  className="rounded-xl border border-red-500 text-red-500 px-4 py-2 text-center hover:bg-red-500 hover:text-white transition-all"
+                  className=&quot;rounded-xl border border-red-500 text-red-500 px-4 py-2 text-center hover:bg-red-500 hover:text-white transition-all&quot;
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    signOut({ callbackUrl: '/' });
+                    signOut({ callbackUrl: &apos;/ });
                   }}
                 >
                   Déconnexion
@@ -120,14 +120,14 @@ export default function Navbar() {
               // Utilisateur non connecté - Boutons connexion/inscription
               <>
                 <Link 
-                  href="/auth/login" 
-                  className="rounded-xl border border-blue-800 text-blue-800 px-4 py-3 text-center hover:bg-blue-800 hover:text-white transition-all"
+                  href=&quot;/auth/login&quot; 
+                  className=&quot;rounded-xl border border-blue-800 text-blue-800 px-4 py-3 text-center hover:bg-blue-800 hover:text-white transition-all&quot;
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Connexion
                 </Link>
                 <Link 
-                  href="/auth/register" 
+                  href=&quot;/auth/register&quot; 
                   className="rounded-xl bg-black px-4 py-3 text-white text-center hover:opacity-90 transition-all"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

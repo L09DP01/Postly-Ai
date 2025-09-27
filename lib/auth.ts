@@ -1,35 +1,35 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
-import { prisma } from "./prisma";
+import NextAuth, { type NextAuthOptions } from &quot;next-auth&quot;;
+import Credentials from &quot;next-auth/providers/credentials&quot;;
+import bcrypt from &quot;bcrypt&quot;;
+import { prisma } from &quot;./prisma&quot;;
 
 export const authOptions: NextAuthOptions = {
-  session: { strategy: "jwt" },
+  session: { strategy: &quot;jwt&quot; },
   providers: [
     Credentials({
-      name: "Email & Password",
+      name: &quot;Email & Password&quot;,
       credentials: { email: {}, password: {} },
       async authorize(creds) {
         try {
-          const email = String((creds as any)?.email || "");
-          const password = String((creds as any)?.password || "");
+          const email = String(creds?.email || &quot;&quot;);
+          const password = String(creds?.password || &quot;&quot;);
           
-          console.log("Auth attempt:", { email, hasPassword: !!password });
+          console.log(&quot;Auth attempt:&quot;, { email, hasPassword: !!password });
           
           if (!email || !password) {
-            console.log("Missing credentials");
+            console.log(&quot;Missing credentials&quot;);
             return null;
           }
 
           const user = await prisma.user.findUnique({ where: { email } });
           if (!user) {
-            console.log("User not found:", email);
+            console.log(&quot;User not found:&quot;, email);
             return null;
           }
 
           const ok = await bcrypt.compare(password, user.passwordHash);
           if (!ok) {
-            console.log("Password mismatch for:", email);
+            console.log(&quot;Password mismatch for:&quot;, email);
             return null;
           }
 
@@ -46,11 +46,13 @@ export const authOptions: NextAuthOptions = {
   pages: { signIn: "/auth/login" },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.id) token.userId = (user as any).id;
+      if (user?.id) token.userId = user.id;
       return token;
     },
     async session({ session, token }) {
-      if (token?.userId) (session.user as any).id = token.userId as string;
+      if (token?.userId && session.user) {
+        (session.user as { id: string }).id = token.userId as string;
+      }
       return session;
     },
     // sécurise les redirections

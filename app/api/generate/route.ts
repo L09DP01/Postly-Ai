@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { GenerationReqSchema, GenerateResponseSchema } from "@/lib/zod-schemas";
-import { requireUserWithQuota, incrementUserGeneration } from "@/lib/rate-limit";
-import { openai } from "@/lib/ai/openai";
-import { GENERATE_SYSTEM_PROMPT } from "@/lib/ai/prompts";
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from &quot;next/server&quot;;
+import { GenerationReqSchema, GenerateResponseSchema } from &quot;@/lib/zod-schemas&quot;;
+import { requireUserWithQuota, incrementUserGeneration } from &quot;@/lib/rate-limit&quot;;
+import { openai } from &quot;@/lib/ai/openai&quot;;
+import { GENERATE_SYSTEM_PROMPT } from &quot;@/lib/ai/prompts&quot;;
+import { prisma } from &quot;@/lib/prisma&quot;;
 
 /**
  * Divise le texte en 3 variantes
@@ -35,9 +35,9 @@ function splitTo3Variants(text: string): string[] {
     const wordsPerPart = Math.ceil(words.length / 3);
     
     parts = [
-      words.slice(0, wordsPerPart).join(" "),
-      words.slice(wordsPerPart, wordsPerPart * 2).join(" "),
-      words.slice(wordsPerPart * 2).join(" "),
+      words.slice(0, wordsPerPart).join(&quot; &quot;),
+      words.slice(wordsPerPart, wordsPerPart * 2).join(&quot; &quot;),
+      words.slice(wordsPerPart * 2).join(&quot; &quot;),
     ];
   }
   
@@ -52,7 +52,7 @@ function splitTo3Variants(text: string): string[] {
  * Génère des hints SEO basiques
  */
 function generateSeoHints(variants: string[]): any {
-  const allText = variants.join(" ");
+  const allText = variants.join(&quot; &quot;);
   const words = allText.toLowerCase().match(/\b\w+\b/g) || [];
   
   // Compter la fréquence des mots
@@ -74,14 +74,14 @@ function generateSeoHints(variants: string[]): any {
   
   return {
     keywords,
-    alt_text: variants[0]?.substring(0, 100) || "",
+    alt_text: variants[0]?.substring(0, 100) || &quot;&quot;,
     suggested_hashtags: hashtags.slice(0, 5),
   };
 }
 
 export async function POST(req: Request) {
   try {
-    // Vérifier l'utilisateur et ses quotas
+    // Vérifier l&apos;utilisateur et ses quotas
     const user = await requireUserWithQuota();
     
     // Valider le body de la requête
@@ -90,20 +90,20 @@ export async function POST(req: Request) {
 
     // Construire le prompt système avec les contraintes
     const systemPrompt = GENERATE_SYSTEM_PROMPT.replace(
-      "{max_hashtags}", 
+      &quot;{max_hashtags}&quot;, 
       String(options?.maxHashtags || 3)
     );
 
     // Appel à OpenAI pour générer les variantes
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: &quot;gpt-4o-mini&quot;,
       messages: [
         {
-          role: "system",
+          role: &quot;system&quot;,
           content: systemPrompt,
         },
         {
-          role: "user",
+          role: &quot;user&quot;,
           content: prompt,
         },
       ],
@@ -113,7 +113,7 @@ export async function POST(req: Request) {
 
     const rawResponse = completion.choices[0]?.message?.content;
     if (!rawResponse) {
-      throw new Error("No response from OpenAI");
+      throw new Error(&quot;No response from OpenAI&quot;);
     }
 
     // Diviser en 3 variantes
@@ -154,7 +154,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Generate error:", error);
     
-    // Si c'est une erreur de quota, la renvoyer telle quelle
+    // Si c&apos;est une erreur de quota, la renvoyer telle quelle
     if (error instanceof Response) {
       return error;
     }

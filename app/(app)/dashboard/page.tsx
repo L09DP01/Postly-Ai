@@ -1,9 +1,9 @@
-export const dynamic = "force-dynamic";
+export const dynamic = &quot;force-dynamic&quot;;
 export const revalidate = 0;
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { getServerSession } from &quot;next-auth&quot;;
+import { authOptions } from &quot;@/lib/auth&quot;;
+import { redirect } from &quot;next/navigation&quot;;
 import GenerateClient from "./generate/GenerateClient";
 
 export default async function GeneratePage() {

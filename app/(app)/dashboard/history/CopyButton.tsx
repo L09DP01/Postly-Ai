@@ -1,5 +1,5 @@
-"use client";
-import { useState } from "react";
+&quot;use client&quot;;
+import { useState } from &quot;react&quot;;
 
 interface CopyButtonProps {
   text: string;
@@ -14,7 +14,7 @@ export default function CopyButton({ text }: CopyButtonProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error("Erreur copie:", error);
+      console.error(&quot;Erreur copie:&quot;, error);
     }
   };
 
@@ -23,7 +23,7 @@ export default function CopyButton({ text }: CopyButtonProps) {
       onClick={handleCopy}
       className={`mt-2 text-xs transition-colors ${
         copied 
-          ? "text-green-600" 
+          ? &quot;text-green-600&quot; 
           : "text-blue-600 hover:text-blue-800"
       }`}
       disabled={copied}

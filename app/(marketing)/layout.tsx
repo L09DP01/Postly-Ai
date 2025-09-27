@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from &quot;@/components/Navbar&quot;;
+import Footer from &quot;@/components/Footer&quot;;
 
 export default function MarketingLayout({
   children,
@@ -7,9 +7,9 @@ export default function MarketingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className=&quot;min-h-screen flex flex-col&quot;>
       <Navbar />
-      <main className="flex-1">
+      <main className=&quot;flex-1&quot;>
         {children}
       </main>
       <Footer />

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { updateUserPlan } from "@/lib/rate-limit";
+import { NextRequest, NextResponse } from &quot;next/server&quot;;
+import { getServerSession } from &quot;next-auth&quot;;
+import { authOptions } from &quot;@/lib/auth&quot;;
+import { prisma } from &quot;@/lib/prisma&quot;;
+import { updateUserPlan } from &quot;@/lib/rate-limit&quot;;
 
 /**
  * Route appelée après vérification d'un paiement réussi pour synchroniser le frontend
@@ -12,17 +12,17 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+      return NextResponse.json({ error: &quot;Non autorisé&quot; }, { status: 401 });
     }
 
-    // Vérifier si l'utilisateur a déjà un plan Pro actif
+    // Vérifier si l&apos;utilisateur a déjà un plan Pro actif
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { quota: true, subscriptions: true }
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
+      return NextResponse.json({ error: &quot;Utilisateur non trouvé&quot; }, { status: 404 });
     }
 
     // Retourner les informations de plan actualisées
@@ -49,9 +49,9 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error("Error checking payment status:", error);
+    console.error(&quot;Error checking payment status:&quot;, error);
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      { error: &quot;Erreur interne du serveur&quot; },
       { status: 500 }
     );
   }
@@ -65,7 +65,7 @@ export async function POST() {
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+      return NextResponse.json({ error: &quot;Non autorisé&quot; }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
@@ -73,11 +73,11 @@ export async function POST() {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
+      return NextResponse.json({ error: &quot;Utilisateur non trouvé&quot; }, { status: 404 });
     }
 
     // Forcer une vérification et mise à jour du plan Pro 
-    await updateUserPlan(user.id, "pro");
+    await updateUserPlan(user.id, &quot;pro&quot;);
 
     return NextResponse.json({
       success: true,

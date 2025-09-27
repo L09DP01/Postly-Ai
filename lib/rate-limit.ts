@@ -1,34 +1,34 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "./auth";
-import { prisma } from "./prisma";
+import { getServerSession } from &quot;next-auth&quot;;
+import { authOptions } from &quot;./auth&quot;;
+import { prisma } from &quot;./prisma&quot;;
 
 export interface UserWithQuota {
   id: string;
   email: string;
-  plan: "free" | "pro";
+  plan: &quot;free&quot; | &quot;pro&quot;;
   remaining: number;
   total: number;
   used: number;
 }
 
 /**
- * Vérifie que l'utilisateur est connecté et a des crédits disponibles
+ * Vérifie que l&apos;utilisateur est connecté et a des crédits disponibles
  * @throws Response avec status 401 si non connecté, 429 si quota dépassé
  */
 export async function requireUserWithQuota(): Promise<UserWithQuota> {
   const session = await getServerSession(authOptions);
   
   if (!session?.user?.email) {
-    throw new Response("Unauthorized", { status: 401 });
+    throw new Response(&quot;Unauthorized&quot;, { status: 401 });
   }
 
-  // Récupérer l'utilisateur
+  // Récupérer lutilisateur
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
 
   if (!user) {
-    throw new Response("User not found", { status: 401 });
+    throw new Response(&quot;User not found&quot;, { status: 401 });
   }
 
   // Récupérer ou créer les quotas
@@ -36,7 +36,7 @@ export async function requireUserWithQuota(): Promise<UserWithQuota> {
     where: { userId: user.id },
     create: {
       userId: user.id,
-      planType: "free",
+      planType: &quot;free&quot;,
       monthlyGenerations: 10,
       usedGenerations: 0,
       resetDate: new Date(),
@@ -48,15 +48,15 @@ export async function requireUserWithQuota(): Promise<UserWithQuota> {
   if (quota.usedGenerations >= quota.monthlyGenerations) {
     throw new Response(
       JSON.stringify({ 
-        error: "quota_exceeded", 
-        message: "Vous avez atteint votre quota de générations mensuelles",
+        error: &quot;quota_exceeded&quot;, 
+        message: &quot;Vous avez atteint votre quota de générations mensuelles&quot;,
         plan: quota.planType,
         used: quota.usedGenerations,
         total: quota.monthlyGenerations
       }),
       { 
         status: 429,
-        headers: { "Content-Type": "application/json" }
+        headers: { &quot;Content-Type&quot;: &quot;application/json&quot; }
       }
     );
   }
@@ -64,7 +64,7 @@ export async function requireUserWithQuota(): Promise<UserWithQuota> {
   return {
     id: user.id,
     email: user.email,
-    plan: quota.planType as "free" | "pro",
+    plan: quota.planType as &quot;free&quot; | &quot;pro&quot;,
     remaining: quota.monthlyGenerations - quota.usedGenerations,
     total: quota.monthlyGenerations,
     used: quota.usedGenerations,
@@ -86,7 +86,7 @@ export async function incrementUserGeneration(userId: string): Promise<void> {
 }
 
 /**
- * Récupère les informations de quota d'un utilisateur (sans vérification)
+ * Récupère les informations de quota dun utilisateur (sans vérification)
  */
 export async function getUserQuotaInfo(userId: string): Promise<UserWithQuota | null> {
   try {
@@ -101,7 +101,7 @@ export async function getUserQuotaInfo(userId: string): Promise<UserWithQuota | 
       where: { userId },
       create: {
         userId: user.id,
-        planType: "free",
+        planType: &quot;free&quot;,
         monthlyGenerations: 10,
         usedGenerations: 0,
         resetDate: new Date(),
@@ -112,23 +112,23 @@ export async function getUserQuotaInfo(userId: string): Promise<UserWithQuota | 
     return {
       id: user.id,
       email: user.email,
-      plan: quota.planType as "free" | "pro",
+      plan: quota.planType as &quot;free&quot; | &quot;pro&quot;,
       remaining: quota.monthlyGenerations - quota.usedGenerations,
       total: quota.monthlyGenerations,
       used: quota.usedGenerations,
     };
   } catch (error) {
-    console.error("Error in getUserQuotaInfo:", error);
+    console.error(&quot;Error in getUserQuotaInfo:&quot;, error);
     return null;
   }
 }
 
 /**
- * Met à jour le plan d'un utilisateur (pour Stripe webhooks)
+ * Met à jour le plan dun utilisateur (pour Stripe webhooks)
  */
 export async function updateUserPlan(
   userId: string, 
-  planType: "free" | "pro"
+  planType: &quot;free&quot; | &quot;pro&quot;
 ): Promise<void> {
   const monthlyGenerations = planType === "pro" ? 200 : 10;
 

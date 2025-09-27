@@ -1,57 +1,57 @@
-import { DefaultSeoProps } from "next-seo";
+import { DefaultSeoProps } from &quot;next-seo&quot;;
 
 const config: DefaultSeoProps = {
-  titleTemplate: "%s | Postly AI",
-  defaultTitle: "Postly AI — Générateur de posts IA",
-  description: "Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA). Transformez vos idées en contenus engageants pour Instagram, Facebook, TikTok et LinkedIn.",
-  canonical: "https://postly-ai.vercel.app",
+  titleTemplate: &quot;%s | Postly AI&quot;,
+  defaultTitle: &quot;Postly AI — Générateur de posts IA&quot;,
+  description: &quot;Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA). Transformez vos idées en contenus engageants pour Instagram, Facebook, TikTok et LinkedIn.&quot;,
+  canonical: &quot;https://postly-ai.vercel.app&quot;,
   openGraph: {
-    type: "website",
-    locale: "fr_FR",
-    url: "https://postly-ai.vercel.app",
-    site_name: "Postly AI",
-    title: "Postly AI — Générateur de posts IA",
-    description: "Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA). Transformez vos idées en contenus engageants pour Instagram, Facebook, TikTok et LinkedIn.",
+    type: &quot;website&quot;,
+    locale: &quot;fr_FR&quot;,
+    url: &quot;https://postly-ai.vercel.app&quot;,
+    site_name: &quot;Postly AI&quot;,
+    title: &quot;Postly AI — Générateur de posts IA&quot;,
+    description: &quot;Générez des posts optimisés en 10 secondes (SEO, hashtags, CTA). Transformez vos idées en contenus engageants pour Instagram, Facebook, TikTok et LinkedIn.&quot;,
     images: [
       {
-        url: "https://postly-ai.vercel.app/og-image.jpg",
+        url: &quot;https://postly-ai.vercel.app/og-image.jpg&quot;,
         width: 1200,
         height: 630,
-        alt: "Postly AI - Générateur de posts IA",
+        alt: &quot;Postly AI - Générateur de posts IA&quot;,
       },
     ],
   },
   twitter: {
-    cardType: "summary_large_image",
-    site: "@postlyai",
-    handle: "@postlyai",
+    cardType: &quot;summary_large_image&quot;,
+    site: &quot;@postlyai&quot;,
+    handle: &quot;@postlyai&quot;,
   },
   additionalMetaTags: [
     {
-      name: "keywords",
-      content: "posts, réseaux sociaux, IA, marketing, Instagram, Facebook, TikTok, LinkedIn, génération de contenu, SEO, hashtags",
+      name: &quot;keywords&quot;,
+      content: &quot;posts, réseaux sociaux, IA, marketing, Instagram, Facebook, TikTok, LinkedIn, génération de contenu, SEO, hashtags&quot;,
     },
     {
-      name: "author",
-      content: "Postly AI",
+      name: &quot;author&quot;,
+      content: &quot;Postly AI&quot;,
     },
     {
-      name: "robots",
-      content: "index, follow",
+      name: &quot;robots&quot;,
+      content: &quot;index, follow&quot;,
     },
     {
-      name: "viewport",
-      content: "width=device-width, initial-scale=1",
+      name: &quot;viewport&quot;,
+      content: &quot;width=device-width, initial-scale=1&quot;,
     },
   ],
   additionalLinkTags: [
     {
-      rel: "icon",
-      href: "/favicon.ico",
+      rel: &quot;icon&quot;,
+      href: &quot;/favicon.ico&quot;,
     },
     {
-      rel: "apple-touch-icon",
-      href: "/apple-touch-icon.png",
+      rel: &quot;apple-touch-icon&quot;,
+      href: &quot;/apple-touch-icon.png&quot;,
       sizes: "180x180",
     },
     {

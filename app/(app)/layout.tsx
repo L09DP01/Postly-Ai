@@ -1,9 +1,9 @@
-"use client";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+&quot;use client&quot;;
+import { useSession, signOut } from &quot;next-auth/react&quot;;
+import { useRouter, usePathname } from &quot;next/navigation&quot;;
+import { useEffect, useState } from &quot;react&quot;;
+import Link from &quot;next/link&quot;;
+import { Button } from &quot;@/components/ui/Button&quot;;
 
 export default function AppLayout({
   children,
@@ -21,36 +21,36 @@ export default function AppLayout({
   };
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth/login");
-    } else if (status === "authenticated") {
+    if (status === &quot;unauthenticated&quot;) {
+      router.push(&quot;/auth/login&quot;);
+    } else if (status === &quot;authenticated&quot;) {
       // Rediriger automatiquement vers le chat au lieu du dashboard
-      if (pathname.startsWith("/dashboard") && pathname.length > 9) {
+      if (pathname.startsWith(&quot;/dashboard&quot;) && pathname.length > 9) {
         return; // Déjà sur la page dashboard/generate
       } else {
-        router.push("/dashboard");
+        router.push(&quot;/dashboard&quot;);
       }
     }
   }, [status, router, pathname]);
 
-  if (status === "loading") {
+  if (status === &quot;loading&quot;) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className=&quot;min-h-screen flex items-center justify-center&quot;>
+        <div className=&quot;animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500&quot;></div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className=&quot;min-h-screen flex items-center justify-center&quot;>
+        <div className=&quot;animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500&quot;></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative" style={{
+    <div className=&quot;min-h-screen relative&quot; style={{
       backgroundColor: '#03224c'
     }}>
       <style jsx global>{`
@@ -74,24 +74,24 @@ export default function AppLayout({
       `}</style>
       
       {/* Subtle animated elements - only logos, text and icons */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Starting animation elements that don't interfere with content */}
+      <div className=&quot;absolute inset-0 overflow-hidden pointer-events-none&quot;>
+        {/* Starting animation elements that dont interfere with content */}
       </div>
       {/* Navigation */}
-      <nav className="bg-white shadow-lg border-b-2 border-gray-300 relative z-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex">
-              <div className="flex flex-shrink-0 items-center">
-                <Link href="/" className="flex items-center space-x-3 hover:no-underline">
+      <nav className=&quot;bg-white shadow-lg border-b-2 border-gray-300 relative z-20&quot;>
+        <div className=&quot;mx-auto max-w-7xl px-4 sm:px-6 lg:px-8&quot;>
+          <div className=&quot;flex h-16 justify-between&quot;>
+            <div className=&quot;flex&quot;>
+              <div className=&quot;flex flex-shrink-0 items-center&quot;>
+                <Link href=&quot;/&quot; className=&quot;flex items-center space-x-3 hover:no-underline&quot;>
                   <img 
-                    src="/logo.png" 
-                    alt="Postly AI" 
-                    className="h-8 w-8 sm:h-12 sm:w-12 rounded-lg object-contain shadow-sm"
+                    src=&quot;/logo.png&quot; 
+                    alt=&quot;Postly AI&quot; 
+                    className=&quot;h-8 w-8 sm:h-12 sm:w-12 rounded-lg object-contain shadow-sm&quot;
                     style={{animation: 'logo-bounce 3s ease-in-out infinite'}}
                   />
                   <span 
-                    className="text-xl sm:text-2xl font-bold text-black"
+                    className=&quot;text-xl sm:text-2xl font-bold text-black&quot;
                     style={{animation: 'text-glow 2s ease-in-out infinite'}}
                   >
                     Postly AI
@@ -99,33 +99,33 @@ export default function AppLayout({
                 </Link>
               </div>
               {/* Desktop Menu */}
-              <div className="hidden md:ml-6 md:flex md:space-x-6">
+              <div className=&quot;hidden md:ml-6 md:flex md:space-x-6&quot;>
                 <Link
-                  href="/dashboard"
+                  href=&quot;/dashboard&quot;
                   className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
-                    isActiveRoute("/dashboard")
-                      ? "border-blue-600 text-black"
-                      : "border-transparent text-gray-700 hover:border-blue-400 hover:text-black"
+                    isActiveRoute(&quot;/dashboard&quot;)
+                      ? &quot;border-blue-600 text-black&quot;
+                      : &quot;border-transparent text-gray-700 hover:border-blue-400 hover:text-black&quot;
                   }`}
                 >
                   Chat
                 </Link>
                 <Link
-                  href="/dashboard/history"
+                  href=&quot;/dashboard/history&quot;
                   className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
-                    isActiveRoute("/dashboard/history")
-                      ? "border-blue-600 text-black"
-                      : "border-transparent text-gray-700 hover:border-blue-400 hover:text-black"
+                    isActiveRoute(&quot;/dashboard/history&quot;)
+                      ? &quot;border-blue-600 text-black&quot;
+                      : &quot;border-transparent text-gray-700 hover:border-blue-400 hover:text-black&quot;
                   }`}
                 >
                   Historique
                 </Link>
                             <Link
-                              href="/dashboard/billing"
+                              href=&quot;/dashboard/billing&quot;
                               className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
-                                isActiveRoute("/dashboard/billing")
-                                  ? "border-blue-600 text-black"
-                                  : "border-transparent text-gray-700 hover:border-blue-400 hover:text-black"
+                                isActiveRoute(&quot;/dashboard/billing&quot;)
+                                  ? &quot;border-blue-600 text-black&quot;
+                                  : &quot;border-transparent text-gray-700 hover:border-blue-400 hover:text-black&quot;
                               }`}
                             >
                               Facturation
@@ -133,23 +133,23 @@ export default function AppLayout({
               </div>
             </div>
             
-            <div className="flex items-center">
+            <div className=&quot;flex items-center&quot;>
               {/* Desktop User Menu */}
-              <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <div className="relative ml-3">
-                  <div className="flex items-center space-x-4">
+              <div className=&quot;hidden sm:ml-6 sm:flex sm:items-center&quot;>
+                <div className=&quot;relative ml-3&quot;>
+                  <div className=&quot;flex items-center space-x-4&quot;>
                     <span 
-                      className="text-sm text-gray-800 font-medium"
+                      className=&quot;text-sm text-gray-800 font-medium&quot;
                       style={{animation: 'text-glow 3s ease-in-out infinite'}}
                     >
                       {session.user?.email}
                     </span>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="border-gray-400 text-gray-800 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:border-transparent hover:text-white transition-all duration-300 hover:scale-105"
-                      style={{animation: 'icon-pulse 4s ease-in-out infinite'}}
+                      variant=&quot;outline&quot;
+                      size=&quot;sm&quot;
+                      onClick={() => signOut({ callbackUrl: &quot;/&quot; })}
+                      className=&quot;border-gray-400 text-gray-800 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 hover:border-transparent hover:text-white transition-all duration-300 hover:scale-105&quot;
+                      style={{animation: &apos;icon-pulse 4s ease-in-out infinite}}
                     >
                       Déconnexion
                     </Button>
@@ -159,11 +159,11 @@ export default function AppLayout({
 
               {/* Mobile Menu Button */}
               <Button
-                variant="outline"
-                size="sm"
-                className="sm:hidden"
+                variant=&quot;outline&quot;
+                size=&quot;sm&quot;
+                className=&quot;sm:hidden&quot;
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                style={{animation: 'icon-pulse 5s ease-in-out infinite'}}
+                style={{animation: &apos;icon-pulse 5s ease-in-out infinite}}
               >
                 ☰
               </Button>
@@ -174,55 +174,55 @@ export default function AppLayout({
           <div className={`${mobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
             {/* Backdrop */}
             <div 
-              className="fixed inset-0 bg-black bg-opacity-25 z-40"
+              className=&quot;fixed inset-0 bg-black bg-opacity-25 z-40&quot;
               onClick={() => setMobileMenuOpen(false)}
             />
             {/* Menu */}
-            <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-              <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className=&quot;absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50&quot;>
+              <div className=&quot;px-2 pt-2 pb-3 space-y-1&quot;>
                 <Link
-                  href="/dashboard"
+                  href=&quot;/dashboard&quot;
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActiveRoute("/dashboard")
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    isActiveRoute(&quot;/dashboard&quot;)
+                      ? &quot;text-blue-600 bg-blue-50&quot;
+                      : &quot;text-gray-700 hover:bg-gray-50 hover:text-gray-900&quot;
                   } hover:bg-blue-100`}
                 >
                   Chat
                 </Link>
                 <Link
-                  href="/dashboard/history"
+                  href=&quot;/dashboard/history&quot;
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActiveRoute("/dashboard/history")
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    isActiveRoute(&quot;/dashboard/history&quot;)
+                      ? &quot;text-blue-600 bg-blue-50&quot;
+                      : &quot;text-gray-700 hover:bg-gray-50 hover:text-gray-900&quot;
                   }`}
                 >
                   Historique
                 </Link>
                             <Link
-                              href="/dashboard/billing"
+                              href=&quot;/dashboard/billing&quot;
                               onClick={() => setMobileMenuOpen(false)}
                               className={`block px-3 py-2 rounded-md text-base font-medium ${
-                                isActiveRoute("/dashboard/billing")
-                                  ? "text-blue-600 bg-blue-50"
-                                  : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                                isActiveRoute(&quot;/dashboard/billing&quot;)
+                                  ? &quot;text-blue-600 bg-blue-50&quot;
+                                  : &quot;text-gray-700 hover:bg-gray-50 hover:text-gray-900&quot;
                               }`}
                             >
                               Facturation
                             </Link>
-                <div className="border-t border-gray-200 pt-3">
-                  <div className="flex items-center px-3 py-2">
-                    <span className="text-sm text-gray-800 font-medium mr-auto">
+                <div className=&quot;border-t border-gray-200 pt-3&quot;>
+                  <div className=&quot;flex items-center px-3 py-2&quot;>
+                    <span className=&quot;text-sm text-gray-800 font-medium mr-auto&quot;>
                       {session.user?.email}
                     </span>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="border-gray-400 text-gray-800 hover:bg-gray-100"
+                      variant=&quot;outline&quot;
+                      size=&quot;sm&quot;
+                      onClick={() => signOut({ callbackUrl: &quot;/&quot; })}
+                      className=&quot;border-gray-400 text-gray-800 hover:bg-gray-100&quot;
                     >
                       Déconnexion
                     </Button>

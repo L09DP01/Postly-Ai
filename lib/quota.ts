@@ -1,6 +1,6 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getServerSession } from &quot;next-auth&quot;;
+import { authOptions } from &quot;@/lib/auth&quot;;
+import { prisma } from &quot;@/lib/prisma&quot;;
 
 export interface UserQuotaInfo {
   user: {
@@ -37,7 +37,7 @@ export async function getUserQuotaInfo(): Promise<UserQuotaInfo> {
       quota = await prisma.userQuota.create({
         data: {
           userId: user.id,
-          planType: "free",
+          planType: &quot;free&quot;,
           monthlyGenerations: 10,
           usedGenerations: 0,
           resetDate: new Date(),

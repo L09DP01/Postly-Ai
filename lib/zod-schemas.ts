@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from &quot;zod&quot;;
 
 // Schéma pour les contraintes de génération
 export const ConstraintsSchema = z.object({
@@ -9,39 +9,39 @@ export const ConstraintsSchema = z.object({
 
 // Schéma pour l'intent parsé
 export const IntentSchema = z.object({
-  platform: z.enum(["instagram", "facebook", "tiktok", "linkedin", "x"]).optional(),
+  platform: z.enum([&quot;instagram&quot;, &quot;facebook&quot;, &quot;tiktok&quot;, &quot;linkedin&quot;, &quot;x&quot;]).optional(),
   industry: z.enum([
-    "restaurant", "beauté", "éducation", "e-commerce", "santé", 
-    "technologie", "mode", "sport", "voyage", "immobilier", 
-    "finance", "autre"
+    &quot;restaurant&quot;, &quot;beauté&quot;, &quot;éducation&quot;, &quot;e-commerce&quot;, &quot;santé&quot;, 
+    &quot;technologie&quot;, &quot;mode&quot;, &quot;sport&quot;, &quot;voyage&quot;, &quot;immobilier&quot;, 
+    &quot;finance&quot;, &quot;autre&quot;
   ]).optional(),
   objective: z.enum([
-    "promo", "fidélisation", "trafic", "recrutement", 
-    "storytelling", "engagement", "vente", "branding"
+    &quot;promo&quot;, &quot;fidélisation&quot;, &quot;trafic&quot;, &quot;recrutement&quot;, 
+    &quot;storytelling&quot;, &quot;engagement&quot;, &quot;vente&quot;, &quot;branding&quot;
   ]).optional(),
   tone: z.enum([
-    "professionnel", "décontracté", "vendeur", "inspirant", 
-    "humoristique", "chaleureux", "urgent", "confiant"
+    &quot;professionnel&quot;, &quot;décontracté&quot;, &quot;vendeur&quot;, &quot;inspirant&quot;, 
+    &quot;humoristique&quot;, &quot;chaleureux&quot;, &quot;urgent&quot;, &quot;confiant&quot;
   ]).optional(),
-  language: z.enum(["fr", "en", "es", "it"]).default("fr"),
+  language: z.enum([&quot;fr&quot;, &quot;en&quot;, &quot;es&quot;, &quot;it&quot;]).default(&quot;fr&quot;),
   audience: z.string().optional(),
   constraints: ConstraintsSchema.optional(),
 });
 
 // Schéma pour la requête de parsing d'intent
 export const ParseIntentReqSchema = z.object({
-  brief: z.string().min(3, "Le brief doit contenir au moins 3 caractères"),
+  brief: z.string().min(3, &quot;Le brief doit contenir au moins 3 caractères&quot;),
 });
 
 // Schéma pour la requête du prompt builder
 export const PromptBuilderReqSchema = z.object({
   intent: IntentSchema,
-  brief: z.string().min(3, "Le brief doit contenir au moins 3 caractères"),
+  brief: z.string().min(3, &quot;Le brief doit contenir au moins 3 caractères&quot;),
 });
 
 // Schéma pour la requête de génération
 export const GenerationReqSchema = z.object({
-  prompt: z.string().min(10, "Le prompt doit contenir au moins 10 caractères"),
+  prompt: z.string().min(10, &quot;Le prompt doit contenir au moins 10 caractères&quot;),
   options: z.object({
     seoBoost: z.boolean().optional().default(false),
     maxHashtags: z.number().min(0).max(5).default(3),
@@ -62,7 +62,7 @@ export const GenerationDataSchema = z.object({
   industry: z.string().optional(),
   objective: z.string().optional(),
   tone: z.string().optional(),
-  language: z.string().default("fr"),
+  language: z.string().default(&quot;fr&quot;),
   audience: z.string().optional(),
   prompt_final: z.string(),
   variants: z.array(z.string()).length(3),
@@ -80,7 +80,7 @@ export const PromptBuilderResponseSchema = z.object({
   prompt: z.string(),
   meta: z.object({
     template_id: z.string().optional(),
-    version: z.string().default("1.0"),
+    version: z.string().default(&quot;1.0&quot;),
   }),
   intent: IntentSchema,
 });
