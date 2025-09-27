@@ -68,7 +68,7 @@ export default async function HistoryPage() {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Générations récentes</h2>
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              {generations.map((generation, index) => (
+              {generations.map((generation: any, index: number) => (
                 <div key={generation.id} className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 ${index === generations.length - 1 ? 'border-b-0' : ''}`}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1 min-w-0">
