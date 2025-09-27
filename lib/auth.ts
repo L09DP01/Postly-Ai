@@ -9,81 +9,37 @@ export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
       name: "Email & Password",
-      credentials: { 
-        email: { label: "Email", type: "text" }, 
-        password: { label: "Password", type: "password" } 
+      credentials: { email: {}, password: {} },
+      async authorize(creds) {
+        const p = z.object({
+          email: z.string().email(),
+          password: z.string().min(6),
+        }).safeParse(creds);
+        if (!p.success) return null;
+        
+        const user = await prisma.user.findUnique({ 
+          where: { email: p.data.email } 
+        });
+        if (!user) return null;
+        
+        const ok = await bcrypt.compare(p.data.password, user.passwordHash);
+        if (!ok) return null;
+        
+        // ⚠️ retourner AU MINIMUM id + email
+        return { id: user.id, email: user.email };
       },
-      async authorize(credentials) {
-        try {
-          console.log("Auth attempt:", { email: credentials?.email });
-          
-          const parsed = z.object({ 
-            email: z.string().email(), 
-            password: z.string().min(6) 
-          }).safeParse(credentials);
-          
-          if (!parsed.success) {
-            console.log("Auth validation failed:", parsed.error);
-            return null;
-          }
-          
-          const user = await prisma.user.findUnique({ 
-            where: { email: parsed.data.email } 
-          });
-          
-          if (!user) {
-            console.log("User not found:", parsed.data.email);
-            return null;
-          }
-          
-          const ok = await bcrypt.compare(parsed.data.password, user.passwordHash);
-          
-          if (ok) {
-            console.log("Auth successful for:", user.email);
-            return { id: user.id, email: user.email };
-          } else {
-            console.log("Password mismatch for:", user.email);
-            return null;
-          }
-        } catch (error) {
-          console.error("Auth authorize error:", error);
-          return null;
-        }
-      }
-    })
+    }),
   ],
-  pages: { 
-    signIn: "/auth/login"
-  },
+  pages: { signIn: "/auth/login" },
   callbacks: {
-    async redirect({ url, baseUrl }) {
-      console.log("Redirect callback:", { url, baseUrl });
-      // Si l'URL commence par /, c'est une URL relative, on la combine avec baseUrl
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Si l'URL est la même que baseUrl, rediriger vers le dashboard
-      else if (new URL(url).origin === baseUrl) return `${baseUrl}/dashboard/generate`;
-      return url;
-    },
     async jwt({ token, user }) {
-      if (user) {
-        console.log("JWT callback - user:", user);
-        token.id = user.id;
-        token.email = user.email;
-      }
+      if (user?.id) token.userId = user.id;
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        console.log("Session callback - token:", token);
-        session.user = {
-          ...session.user,
-          id: token.id as string,
-          email: token.email as string,
-        };
-      }
+      if (token?.userId) (session.user as any).id = token.userId;
       return session;
-    }
+    },
   },
-  debug: true // Activer le debug en développement
 };
 

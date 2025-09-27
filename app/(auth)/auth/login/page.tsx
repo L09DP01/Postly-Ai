@@ -20,38 +20,22 @@ export default function LoginPage() {
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
-    console.log("Login attempt:", { email, hasPassword: !!password });
-
     try {
-      // Première tentative avec redirect: false pour gérer manuellement
       const res = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
 
-      console.log("SignIn result:", res);
-
       if (res?.error) {
-        console.error("SignIn error:", res.error);
         setError("Identifiants invalides");
       } else if (res?.ok) {
-        console.log("Login successful, attempting redirect...");
-        
-        // Essayer plusieurs méthodes de redirection
-        try {
-          // Méthode 1: window.location (force le rechargement complet)
-          window.location.href = "/dashboard/generate";
-        } catch (redirectError) {
-          console.error("Redirect error:", redirectError);
-          // Méthode 2: router.push en fallback
-          router.push("/dashboard/generate");
-        }
+        // Redirection simple avec NextAuth
+        window.location.href = "/dashboard/generate";
       } else {
         setError("Erreur de connexion inattendue");
       }
     } catch (error) {
-      console.error("Login error:", error);
       setError("Une erreur est survenue");
     } finally {
       setLoading(false);
