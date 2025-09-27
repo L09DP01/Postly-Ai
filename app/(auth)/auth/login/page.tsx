@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/Input";
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
+  const params = useSearchParams();
+  const callbackUrl = params.get("callbackUrl") || "/dashboard/generate";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,22 +23,14 @@ export default function LoginPage() {
 
     try {
       const res = await signIn("credentials", {
-        redirect: false,
         email,
         password,
+        redirect: true,
+        callbackUrl, // 👈 renvoie là où tu veux
       });
-
-      if (res?.error) {
-        setError("Identifiants invalides");
-      } else if (res?.ok) {
-        // Redirection simple avec NextAuth
-        window.location.href = "/dashboard/generate";
-      } else {
-        setError("Erreur de connexion inattendue");
-      }
+      // pas besoin de gérer la suite si redirect:true
     } catch (error) {
       setError("Une erreur est survenue");
-    } finally {
       setLoading(false);
     }
   }

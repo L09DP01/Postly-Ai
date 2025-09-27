@@ -6,9 +6,7 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",   // protégé
-    "/billing/:path*",     // protégé
-    // NE PAS inclure "/auth" ni "/api/auth"
+    "/dashboard/:path*", // 👈 protégé
   ],
 };
 
