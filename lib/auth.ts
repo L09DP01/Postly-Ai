@@ -56,6 +56,14 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login"
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      console.log("Redirect callback:", { url, baseUrl });
+      // Si l'URL commence par /, c'est une URL relative, on la combine avec baseUrl
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Si l'URL est la même que baseUrl, rediriger vers le dashboard
+      else if (new URL(url).origin === baseUrl) return `${baseUrl}/dashboard/generate`;
+      return url;
+    },
     async jwt({ token, user }) {
       if (user) {
         console.log("JWT callback - user:", user);

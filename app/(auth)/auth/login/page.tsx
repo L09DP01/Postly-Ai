@@ -23,6 +23,7 @@ export default function LoginPage() {
     console.log("Login attempt:", { email, hasPassword: !!password });
 
     try {
+      // Première tentative avec redirect: false pour gérer manuellement
       const res = await signIn("credentials", {
         redirect: false,
         email,
@@ -35,12 +36,17 @@ export default function LoginPage() {
         console.error("SignIn error:", res.error);
         setError("Identifiants invalides");
       } else if (res?.ok) {
-        console.log("Login successful, redirecting...");
-        // Attendre un peu pour que la session soit mise à jour
-        setTimeout(() => {
+        console.log("Login successful, attempting redirect...");
+        
+        // Essayer plusieurs méthodes de redirection
+        try {
+          // Méthode 1: window.location (force le rechargement complet)
+          window.location.href = "/dashboard/generate";
+        } catch (redirectError) {
+          console.error("Redirect error:", redirectError);
+          // Méthode 2: router.push en fallback
           router.push("/dashboard/generate");
-          router.refresh(); // Force refresh de la page
-        }, 100);
+        }
       } else {
         setError("Erreur de connexion inattendue");
       }
