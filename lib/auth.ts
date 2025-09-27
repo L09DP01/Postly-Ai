@@ -10,18 +10,36 @@ export const authOptions: NextAuthOptions = {
       name: "Email & Password",
       credentials: { email: {}, password: {} },
       async authorize(creds) {
-        const email = String((creds as any)?.email || "");
-        const password = String((creds as any)?.password || "");
-        if (!email || !password) return null;
+        try {
+          const email = String((creds as any)?.email || "");
+          const password = String((creds as any)?.password || "");
+          
+          console.log("Auth attempt:", { email, hasPassword: !!password });
+          
+          if (!email || !password) {
+            console.log("Missing credentials");
+            return null;
+          }
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return null;
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user) {
+            console.log("User not found:", email);
+            return null;
+          }
 
-        const ok = await bcrypt.compare(password, user.passwordHash);
-        if (!ok) return null;
+          const ok = await bcrypt.compare(password, user.passwordHash);
+          if (!ok) {
+            console.log("Password mismatch for:", email);
+            return null;
+          }
 
-        // IMPORTANT: retourner au moins id + email
-        return { id: user.id, email: user.email };
+          console.log("Auth successful for:", email);
+          // IMPORTANT: retourner au moins id + email
+          return { id: user.id, email: user.email };
+        } catch (error) {
+          console.error("Auth authorize error:", error);
+          return null;
+        }
       },
     }),
   ],
