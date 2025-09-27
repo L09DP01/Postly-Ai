@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { PromptBuilderReqSchema, PromptBuilderResponseSchema } from "@/lib/zod-schemas";
-import { PROMPT_TEMPLATES } from "@/lib/ai/prompts";
+import { PROMPT_BUILDER_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { openai } from "@/lib/ai/openai";
 
 export async function POST(req: Request) {
   try {
@@ -19,22 +20,32 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { intent, brief } = PromptBuilderReqSchema.parse(body);
 
-    // Sélectionner le template approprié basé sur platform + objectif
-    const selectedTemplate = getPromptTemplate(intent);
+    // Construire le contexte pour le Prompt Builder
+    const contextPrompt = buildContextPrompt(intent, brief);
 
-    // Remplir les variables dans le template
-    const finalPrompt = replaceTemplateVariables(selectedTemplate, intent, brief);
+    // Appeler GPT avec PROMPT_BUILDER_SYSTEM_PROMPT
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: PROMPT_BUILDER_SYSTEM_PROMPT },
+        { role: "user", content: contextPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 500,
+    });
+
+    const finalPrompt = completion.choices[0]?.message?.content?.trim();
 
     if (!finalPrompt) {
-      throw new Error("Unable to generate prompt template");
+      throw new Error("Unable to generate prompt");
     }
 
     // Valider la réponse avec Zod
     const response = PromptBuilderResponseSchema.parse({
-      prompt: finalPrompt.trim(),
+      prompt: finalPrompt,
       meta: {
         template_id: `${intent.platform || "default"}_${intent.objective || "general"}`,
-        version: "1.0",
+        version: "2.0",
       },
       intent,
     });
@@ -59,70 +70,36 @@ export async function POST(req: Request) {
 }
 
 /**
- * Sélectionne le bon template basé sur la plateforme et l'objectif
+ * Construit le contexte complet pour le Prompt Builder
  */
-function getPromptTemplate(intent: any): string {
-  const platform = intent.platform?.toLowerCase() || "instagram";
-  const objective = intent.objective?.toLowerCase() || "engagement";
+function buildContextPrompt(intent: any, brief: string): string {
+  const context = [];
   
-  // Mapping objective vers les clés de template
-  const objectiveMapping: { [key: string]: string } = {
-    "promo": "promo",
-    "promotion": "promo",
-    "fidélisation": "engagement",
-    "trafic": "engagement",
-    "recrutement": "professional",
-    "storytelling": "storytelling",
-    "engagement": "engagement",
-    "vente": "promo",
-    "branding": "storytelling",
-    "thought_leadership": "thought_leadership",
-    "networking": "networking",
-    "viral": "viral",
-    "trend": "trend"
-  };
-
-  const templateKey = objectiveMapping[objective] || "engagement";
-
-  // Sélectionner le template
-  const platformTemplates = PROMPT_TEMPLATES[platform as keyof typeof PROMPT_TEMPLATES];
-  if (!platformTemplates) {
-    // Fallback sur instagram si plateforme inconnue
-    const instagramTemplates = PROMPT_TEMPLATES.instagram as any;
-    return instagramTemplates[templateKey] || instagramTemplates.engagement;
+  context.push(`BRIEF UTILISATEUR: "${brief}"`);
+  context.push(`\nINTENTION ANALYSÉE:`);
+  
+  if (intent.platform) context.push(`- Plateforme: ${intent.platform}`);
+  if (intent.industry) context.push(`- Secteur: ${intent.industry}`);
+  if (intent.objective) context.push(`- Objectif: ${intent.objective}`);
+  if (intent.tone) context.push(`- Ton: ${intent.tone}`);
+  if (intent.language) context.push(`- Langue: ${intent.language}`);
+  if (intent.audience) context.push(`- Audience: ${intent.audience}`);
+  
+  if (intent.constraints) {
+    context.push(`\nCONTRAINTES:`);
+    if (intent.constraints.max_hashtags) {
+      context.push(`- Maximum hashtags: ${intent.constraints.max_hashtags}`);
+    }
+    if (intent.constraints.emoji_ok !== undefined) {
+      context.push(`- Emojis autorisés: ${intent.constraints.emoji_ok ? "Oui" : "Non"}`);
+    }
+    if (intent.constraints.max_chars) {
+      context.push(`- Limite caractères: ${intent.constraints.max_chars}`);
+    }
   }
-
-  const template = (platformTemplates as any)[templateKey];
-  return template || (platformTemplates as any).engagement;
-}
-
-/**
- * Remplace les variables placeholder dans le template
- */
-function replaceTemplateVariables(template: string, intent: any, brief: string): string {
-  const variables = {
-    brief: brief,
-    language: intent.language || "fr",
-    objective: intent.objective || "engagement",
-    tone: intent.tone || "décontracté",
-    audience: intent.audience || "audience générale",
-    platform: intent.platform || "instagram",
-    max_hashtags: intent.constraints?.max_hashtags || 3,
-    max_chars: intent.constraints?.max_chars || "",
-  };
-
-  let processedTemplate = template;
-
-  // Remplacer les variables avec la syntaxe {var}
-  Object.entries(variables).forEach(([key, value]) => {
-    const placeholder = `{${key}}`;
-    const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-    processedTemplate = processedTemplate.replace(regex, String(value));
-  });
-
-  // Nettoyer les placeholders restants
-  processedTemplate = processedTemplate.replace(/\{[^}]+\}/g, '');
-
-  return processedTemplate;
+  
+  context.push(`\nCONSTRUIRE UN PROMPT OPTIMISÉ pour le générateur final qui devra créer 3 variantes complètes et engageantes.`);
+  
+  return context.join('\n');
 }
 
