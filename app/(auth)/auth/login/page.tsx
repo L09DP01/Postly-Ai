@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/Input";
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [callbackUrl, setCallbackUrl] = useState("/dashboard/generate");
+  const [callbackUrl, setCallbackUrl] = useState("/dashboard");
 
   // Récupérer callbackUrl côté client sans useSearchParams
   useState(() => {

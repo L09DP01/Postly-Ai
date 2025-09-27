@@ -28,7 +28,7 @@ export default function AppLayout({
       if (pathname.startsWith("/dashboard") && pathname.length > 9) {
         return; // Déjà sur la page dashboard/generate
       } else {
-        router.push("/dashboard/generate");
+        router.push("/dashboard");
       }
     }
   }, [status, router, pathname]);
@@ -101,9 +101,9 @@ export default function AppLayout({
               {/* Desktop Menu */}
               <div className="hidden md:ml-6 md:flex md:space-x-6">
                 <Link
-                  href="/dashboard/generate"
+                  href="/dashboard"
                   className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
-                    isActiveRoute("/dashboard/generate")
+                    isActiveRoute("/dashboard")
                       ? "border-blue-600 text-black"
                       : "border-transparent text-gray-700 hover:border-blue-400 hover:text-black"
                   }`}
@@ -181,10 +181,10 @@ export default function AppLayout({
             <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 <Link
-                  href="/dashboard/generate"
+                  href="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-3 py-2 rounded-md text-base font-medium ${
-                    isActiveRoute("/dashboard/generate")
+                    isActiveRoute("/dashboard")
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                   } hover:bg-blue-100`}

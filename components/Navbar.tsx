@@ -29,7 +29,7 @@ export default function Navbar() {
           {session ? (
             // Utilisateur connecté - Affichage icône profil + options
             <div className="flex items-center gap-3">
-              <Link href="/dashboard/generate" className="flex items-center space-x-2 text-blue-800 hover:text-blue-600 transition-colors">
+              <Link href="/dashboard" className="flex items-center space-x-2 text-blue-800 hover:text-blue-600 transition-colors">
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
@@ -88,7 +88,7 @@ export default function Navbar() {
               // Utilisateur connecté - Options du menu mobile
               <>
                 <Link 
-                  href="/dashboard/generate" 
+                  href="/dashboard" 
                   className="flex items-center space-x-2 text-blue-800 hover:text-blue-600 py-2 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import HeroDemo from "@/components/HeroDemo";
 import Features from "@/components/Features";
+import Platforms from "@/components/Platforms";
+import Testimonials from "@/components/Testimonials";
 import PricingTable from "@/components/PricingTable";
 import FaqAccordion from "@/components/FaqAccordion";
 import Footer from "@/components/Footer";
@@ -65,6 +67,8 @@ export default function Home() {
       <Navbar />
       <HeroDemo />
       <Features />
+      <Platforms />
+      <Testimonials />
       <PricingTable />
       <FaqAccordion />
       <Footer />
