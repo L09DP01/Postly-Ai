@@ -23,11 +23,14 @@ export async function POST(req: Request) {
     // Construire le contexte pour le Prompt Builder
     const contextPrompt = buildContextPrompt(intent, brief);
 
+    // Construire le prompt système avec la langue détectée
+    const systemPrompt = PROMPT_BUILDER_SYSTEM_PROMPT(intent.language || "en");
+
     // Appeler GPT avec PROMPT_BUILDER_SYSTEM_PROMPT
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: PROMPT_BUILDER_SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt },
         { role: "user", content: contextPrompt },
       ],
       temperature: 0.7,

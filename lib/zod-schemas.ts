@@ -23,7 +23,8 @@ export const IntentSchema = z.object({
     "professionnel", "décontracté", "vendeur", "inspirant", 
     "humoristique", "chaleureux", "urgent", "confiant"
   ]).optional(),
-  language: z.enum(["fr", "en", "es", "it"]).default("fr"),
+  language: z.string().nullable().optional(), // Code BCP-47 (ex: "fr", "en", "pt-BR", "ar")
+  language_confidence: z.number().min(0).max(1).nullable().optional(), // Confiance 0-1
   audience: z.string().optional(),
   constraints: ConstraintsSchema.optional().nullable(),
 });
@@ -31,6 +32,7 @@ export const IntentSchema = z.object({
 // Schéma pour la requête de parsing d'intent
 export const ParseIntentReqSchema = z.object({
   brief: z.string().min(3, "Le brief doit contenir au moins 3 caractères"),
+  userLanguage: z.string().optional(), // Langue choisie par l'utilisateur ("auto" ou code BCP-47)
 });
 
 // Schéma pour la requête du prompt builder
@@ -62,7 +64,7 @@ export const GenerationDataSchema = z.object({
   industry: z.string().optional(),
   objective: z.string().optional(),
   tone: z.string().optional(),
-  language: z.string().default("fr"),
+  language: z.string().default("en"), // Code BCP-47 avec fallback "en"
   audience: z.string().optional(),
   prompt_final: z.string(),
   variants: z.array(z.string()).length(3),

@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getUserQuotaInfo } from "@/lib/quota";
+import { useLanguage, usePromptLanguage, SupportedLanguage } from "@/lib/contexts/LanguageContext";
+import LanguageSelector from "@/components/LanguageSelector";
+import RTLContainer, { useRTL } from "@/components/RTLContainer";
 
 interface Message {
   id: string;
@@ -22,6 +25,9 @@ interface GenerationResult {
 }
 
 export default function GenerateClient() {
+  const { t, language } = useLanguage();
+  const { promptLanguage, setPromptLanguage } = usePromptLanguage();
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,6 +38,8 @@ export default function GenerateClient() {
     description: "",
     platform: "instagram"
   });
+  const [detectedLanguage, setDetectedLanguage] = useState<string>("en");
+  const [isRTL, setIsRTL] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll automatique vers le bas
@@ -84,23 +92,33 @@ export default function GenerateClient() {
     setLoading(true);
 
     try {
-      // Parse intent (simplified)
-      const intent = inputValue.length < 20 
-        ? null 
-        : {
-            platform: "instagram",
-            objective: "engagement",
-            tone: "décontracté",
-            language: "fr",
-            constraints: { max_hashtags: 3, emoji_ok: true },
-          };
+      // 1) Parse intent avec détection de langue
+      const parseResponse = await fetch("/api/parse-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          brief: inputValue.trim(),
+          userLanguage: promptLanguage === 'auto' ? undefined : promptLanguage
+        }),
+      });
 
-      // Prompt builder
+      if (!parseResponse.ok) throw new Error("Erreur lors de l'analyse de l'intention");
+
+      const parseData = await parseResponse.json();
+      const intent = parseData.intent;
+      
+      // Mettre à jour la langue détectée et RTL
+      if (parseData.languageResolution) {
+        setDetectedLanguage(parseData.languageResolution.finalLanguage);
+        setIsRTL(parseData.languageResolution.isRTL);
+      }
+
+      // 2) Prompt builder avec la langue détectée
       const promptResponse = await fetch("/api/prompt-builder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          intent: intent || { brief: inputValue.trim() },
+          intent: intent,
           brief: inputValue.trim() 
         }),
       });
@@ -267,9 +285,14 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
         <div className="flex items-center justify-between p-3 sm:p-4">
           <h1 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">
-            💬 Chat Générateur IA
+            💬 {t('chat.title')}
           </h1>
           <div className="flex items-center space-x-2 ml-2">
+            {detectedLanguage && detectedLanguage !== "en" && (
+              <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full font-medium whitespace-nowrap">
+                🌍 {detectedLanguage.toUpperCase()}
+              </span>
+            )}
             <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full font-medium whitespace-nowrap">
               ⚡ {quotaInfo?.plan === 'pro' ? 'Pro' : 'Gratuit'} - {quotaInfo?.remaining || 0} crédits
             </span>
@@ -290,13 +313,13 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
               Commencez à taper votre idée
             </h3>
             <p className="text-gray-600 text-sm max-w-sm mx-auto">
-              Décrivez votre post et l'IA générera 3 variantes optimisées pour vous
+              {t('chat.placeholder')}
             </p>
           </div>
         )}
 
         {messages.map((message) => (
-          <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} px-2`}>
+          <RTLContainer key={message.id} language={detectedLanguage} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"} px-2`}>
             <div className={`max-w-[85%] sm:max-w-md lg:max-w-lg xl:max-w-lg`}>
               {message.type === "user" ? (
                 // Message utilisateur - aligné à droite, bulle bleue
@@ -314,7 +337,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
                   {message.variants && (
                     <div className="space-y-3 mt-3">
                       {message.variants.map((variant, index) => (
-                        <div key={index} className="bg-gray-50 border-l-4 border-blue-200 pl-3 py-2 rounded-r-lg">
+                        <RTLContainer key={index} language={detectedLanguage} className="bg-gray-50 border-l-4 border-blue-200 pl-3 py-2 rounded-r-lg">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <p className="text-xs font-medium text-gray-600 mb-1">
@@ -333,7 +356,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
                               </svg>
                             </button>
                           </div>
-                        </div>
+                        </RTLContainer>
                       ))}
                     </div>
                   )}
@@ -344,7 +367,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
                 </div>
               )}
             </div>
-          </div>
+          </RTLContainer>
         ))}
 
         {/* Loading indicator */}
@@ -377,7 +400,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
-            <span>Prompt Builder</span>
+            <span>{t('chat.promptBuilder')}</span>
           </button>
         </div>
 
@@ -403,7 +426,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
             <textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Décrivez votre idée de post..."
+              placeholder={t('chat.placeholder')}
               className="w-full resize-none border border-gray-300 rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm leading-relaxed"
               rows={2}
               maxLength={700}
@@ -438,7 +461,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">✨ Prompt Builder</h3>
+                <h3 className="text-lg font-semibold text-gray-900">✨ {t('promptBuilder.title')}</h3>
                 <button
                   onClick={() => setShowPromptBuilder(false)}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -449,10 +472,25 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
                 </button>
               </div>
 
+              {/* Sélecteur de langue pour le prompt */}
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                <label className="block text-sm font-medium text-blue-900 mb-2">
+                  🌍 {t('promptBuilder.languageLabel')}
+                </label>
+                <LanguageSelector 
+                  className="w-full" 
+                  value={promptLanguage}
+                  onChange={setPromptLanguage}
+                />
+                <p className="text-xs text-blue-700 mt-1">
+                  {t('promptBuilder.languageLabel')} {promptLanguage === 'fr' ? 'Français' : promptLanguage === 'en' ? 'English' : promptLanguage === 'es' ? 'Español' : 'Italiano'}
+                </p>
+              </div>
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nom de la marque/produit
+                    {t('promptBuilder.productName')}
                   </label>
                   <input
                     type="text"
@@ -465,7 +503,7 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
+                    {t('promptBuilder.description')}
                   </label>
                   <textarea
                     value={promptBuilderData.description}
@@ -478,18 +516,18 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Plateforme
+                    {t('promptBuilder.platform')}
                   </label>
                   <select
                     value={promptBuilderData.platform}
                     onChange={(e) => setPromptBuilderData(prev => ({ ...prev, platform: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                   >
-                    <option value="instagram">Instagram</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="tiktok">TikTok</option>
-                    <option value="linkedin">LinkedIn</option>
-                    <option value="twitter">Twitter</option>
+                    <option value="instagram">{t('platform.instagram')}</option>
+                    <option value="facebook">{t('platform.facebook')}</option>
+                    <option value="tiktok">{t('platform.tiktok')}</option>
+                    <option value="linkedin">{t('platform.linkedin')}</option>
+                    <option value="twitter">{t('platform.x')}</option>
                   </select>
                 </div>
               </div>
@@ -499,14 +537,14 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
                   onClick={() => setShowPromptBuilder(false)}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  Annuler
+                  {t('promptBuilder.cancel')}
                 </button>
                 <button
                   onClick={handlePromptBuilderSubmit}
                   disabled={!promptBuilderData.brandName.trim() || !promptBuilderData.description.trim()}
                   className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
-                  Générer le prompt
+                  {t('promptBuilder.generate')}
                 </button>
               </div>
             </div>

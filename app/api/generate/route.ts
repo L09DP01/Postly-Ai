@@ -88,8 +88,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { prompt, options } = GenerationReqSchema.parse(body);
 
-    // Construire le prompt système avec les contraintes
-    const systemPrompt = GENERATE_SYSTEM_PROMPT.replace(
+    // Extraire la langue du prompt (si spécifiée)
+    const languageMatch = prompt.match(/langue[:\s]+([a-z-]+)/i);
+    const detectedLanguage = languageMatch ? languageMatch[1] : "en";
+
+    // Construire le prompt système avec la langue détectée et les contraintes
+    const systemPrompt = GENERATE_SYSTEM_PROMPT(detectedLanguage).replace(
       "{max_hashtags}", 
       String(options?.maxHashtags || 3)
     );

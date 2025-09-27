@@ -14,13 +14,13 @@
     "postinstall": "prisma generate",
     "migrate:deploy": "prisma migrate deploy"
   },
-  
   "dependencies": {
     "@prisma/client": "^6.16.2",
     "@types/bcrypt": "^6.0.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.22",
+    "franc": "^6.2.0",
     "next": "15.5.4",
     "next-auth": "^4.24.11",
     "next-seo": "^6.8.0",
