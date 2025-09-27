@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  generations   Generation[]
+  subscriptions Subscription[]
+  quota         UserQuota?
+}
+
+model Generation {
+  id          String   @id @default(cuid())
+  userId      String
+  brief       String
+  platform    String?
+  industry    String?
+  objective   String?
+  tone        String?
+  language    String   @default("fr")
+  audience    String?
+  promptFinal String
+  variants    Json // Array of 3 strings
+  seoData     Json? // SEO hints
+  usageTokens Int?
+  costUsd     Decimal?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  stripeCustomerId       String?   @unique
+  stripeSubscriptionId   String?   @unique
+  stripePriceId          String?
+  stripeCurrentPeriodEnd DateTime?
+  planType               String    @default("free") // "free" | "pro"
+  status                 String    @default("active") // "active" | "canceled" | "past_due"
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserQuota {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  planType           String   @default("free") // "free" | "pro"
+  monthlyGenerations Int      @default(10) // 10 for free, 200 for pro
+  usedGenerations    Int      @default(0)
+  resetDate          DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

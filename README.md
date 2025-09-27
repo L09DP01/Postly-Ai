@@ -1,36 +1,219 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Postly AI - Générateur de posts IA
 
-## Getting Started
+Postly AI est une application SaaS qui génère des posts optimisés pour les réseaux sociaux en utilisant l'intelligence artificielle. Transformez vos idées en contenus engageants en quelques secondes.
 
-First, run the development server:
+## 🚀 Fonctionnalités
 
+- **Génération ultra-rapide** : 3 variantes de posts en moins de 10 secondes
+- **SEO intégré** : Hashtags pertinents et mots-clés optimisés
+- **Multi-plateformes** : Instagram, Facebook, TikTok, LinkedIn, Twitter
+- **Tons personnalisables** : Professionnel, décontracté, vendeur, inspirant
+- **Authentification sécurisée** : NextAuth avec credentials email/password
+- **Dashboard complet** : Suivi des générations et gestion des crédits
+- **Design responsive** : Optimisé pour tous les appareils
+
+## 🛠️ Stack technique
+
+- **Frontend** : Next.js 14 (App Router), TypeScript, TailwindCSS
+- **Animations** : Framer Motion
+- **Authentification** : NextAuth.js
+- **Base de données** : Prisma + SQLite (dev)
+- **Validation** : Zod
+- **SEO** : next-seo, next-sitemap
+- **Styling** : TailwindCSS avec design system personnalisé
+
+## 📦 Installation
+
+### Prérequis
+
+- Node.js 18+ 
+- npm ou yarn
+
+### Étapes d'installation
+
+1. **Cloner le projet**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd postly-ai
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Installer les dépendances**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Configuration de l'environnement**
+```bash
+cp env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Éditez le fichier `.env.local` :
+```env
+NEXTAUTH_URL=https://postly-ai.vercel.app
+NEXTAUTH_SECRET=change-me-to-a-secure-secret
+DATABASE_URL="file:./dev.db"
+```
 
-## Learn More
+4. **Initialiser la base de données**
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. **Lancer le serveur de développement**
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+L'application sera disponible sur [https://postly-ai.vercel.app](https://postly-ai.vercel.app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗂️ Structure du projet
 
-## Deploy on Vercel
+```
+postly-ai/
+├── app/
+│   ├── (marketing)/          # Pages marketing publiques
+│   │   ├── page.tsx         # Landing page
+│   │   ├── pricing/         # Page tarifs
+│   │   ├── contact/         # Page contact
+│   │   ├── privacy/         # Politique de confidentialité
+│   │   └── terms/           # Conditions d'utilisation
+│   ├── (auth)/auth/         # Pages d'authentification
+│   │   ├── login/           # Connexion
+│   │   └── register/        # Inscription
+│   ├── (app)/               # Pages protégées
+│   │   ├── dashboard/       # Tableau de bord
+│   │   └── billing/         # Gestion facturation
+│   ├── api/                 # API Routes
+│   │   ├── auth/            # NextAuth
+│   │   └── register/        # Inscription
+│   └── layout.tsx           # Layout principal
+├── components/              # Composants réutilisables
+│   ├── ui/                  # Composants UI de base
+│   ├── HeroDemo.tsx         # Section hero de la landing
+│   ├── Features.tsx         # Section fonctionnalités
+│   ├── PricingTable.tsx     # Tableau des tarifs
+│   ├── FaqAccordion.tsx     # FAQ accordéon
+│   ├── Navbar.tsx           # Navigation
+│   └── Footer.tsx           # Pied de page
+├── lib/                     # Utilitaires et configuration
+│   ├── auth.ts              # Configuration NextAuth
+│   ├── prisma.ts            # Client Prisma
+│   ├── validators.ts        # Schémas Zod
+│   └── seo/                 # Configuration SEO
+├── prisma/                  # Schéma de base de données
+│   └── schema.prisma        # Modèles Prisma
+├── public/                  # Assets statiques
+├── middleware.ts            # Middleware de protection
+└── tailwind.config.ts       # Configuration Tailwind
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔐 Comptes de test
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pour tester l'application, vous pouvez créer un compte via l'interface d'inscription ou utiliser les données suivantes :
+
+**Plan Gratuit** :
+- 10 posts par mois
+- 3 plateformes supportées
+- Support email
+
+## 📱 Pages disponibles
+
+### Pages publiques
+- `/` - Landing page avec animations
+- `/pricing` - Tarifs et plans
+- `/contact` - Formulaire de contact
+- `/privacy` - Politique de confidentialité
+- `/terms` - Conditions d'utilisation
+
+### Pages d'authentification
+- `/auth/login` - Connexion
+- `/auth/register` - Inscription
+
+### Pages protégées (nécessitent une connexion)
+- `/dashboard` - Tableau de bord principal
+- `/billing` - Gestion de l'abonnement
+
+## 🎨 Design System
+
+### Couleurs
+- **Primaire** : #635BFF (violet)
+- **Neutres** : Palette de gris avec support dark mode
+- **États** : Vert (succès), Rouge (erreur), Jaune (avertissement)
+
+### Composants
+- **Cards** : Bordures arrondies (2xl), ombres douces
+- **Buttons** : Animations hover/tap avec Framer Motion
+- **Inputs** : Focus states avec couleurs primaires
+- **Effets** : Glass morphism léger, backdrop blur
+
+## 🚀 Déploiement
+
+### Vercel (Recommandé)
+
+1. **Connecter le repository**
+```bash
+npx vercel --prod
+```
+
+2. **Configurer les variables d'environnement**
+- `NEXTAUTH_URL` : URL de production
+- `NEXTAUTH_SECRET` : Secret sécurisé
+- `DATABASE_URL` : URL de base de données (PostgreSQL pour la prod)
+
+3. **Déployer**
+```bash
+git push origin main
+```
+
+### Variables d'environnement de production
+
+```env
+NEXTAUTH_URL=https://votre-domaine.com
+NEXTAUTH_SECRET=secret-super-securise
+DATABASE_URL="postgresql://user:password@host:port/database"
+```
+
+## 📈 SEO et Performance
+
+- **Lighthouse Score** : ≥ 90 (Performance, SEO, Accessibilité)
+- **LCP** : < 2.5s
+- **CLS** : < 0.1
+- **Meta tags** : OpenGraph, Twitter Cards
+- **Structured Data** : JSON-LD pour les produits et FAQ
+- **Sitemap** : Généré automatiquement
+- **Robots.txt** : Configuré pour l'indexation
+
+## 🔧 Scripts disponibles
+
+```bash
+npm run dev          # Serveur de développement
+npm run build        # Build de production
+npm run start        # Serveur de production
+npm run lint         # ESLint
+npm run db:generate  # Générer le client Prisma
+npm run db:push      # Pousser le schéma vers la DB
+npm run db:studio    # Interface Prisma Studio
+```
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/amazing-feature`)
+3. Commit les changements (`git commit -m 'Add amazing feature'`)
+4. Push vers la branche (`git push origin feature/amazing-feature`)
+5. Ouvrir une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 🆘 Support
+
+Pour toute question ou problème :
+- 📧 Email : support@postly-ai.com
+- 💬 Contact : [Page de contact](/contact)
+
+---
+
+**Postly AI** - Générez des posts qui performent, en 10 secondes. 🚀

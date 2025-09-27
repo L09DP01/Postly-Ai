@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow private areas
+Disallow: /dashboard/
+Disallow: /billing/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://postly-ai.vercel.app/sitemap.xml
+
