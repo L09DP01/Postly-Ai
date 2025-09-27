@@ -44,6 +44,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Register error:", error);
     
+    // Log détaillé pour le debugging
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Données invalides", details: error.issues },
@@ -51,8 +57,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Erreur de base de données
+    if (error instanceof Error && error.message.includes("connect")) {
+      return NextResponse.json(
+        { error: "Erreur de connexion à la base de données" },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Erreur lors de la création du compte" },
+      { error: "Erreur lors de la création du compte", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

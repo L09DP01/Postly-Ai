@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // désactive le SSG
+export const revalidate = 0; 
 import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 import { getUserQuotaInfo } from "@/lib/quota";

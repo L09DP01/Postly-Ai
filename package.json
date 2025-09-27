@@ -10,8 +10,11 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "postinstall": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy"
   },
+  
   "dependencies": {
     "@prisma/client": "^6.16.2",
     "@types/bcrypt": "^6.0.0",

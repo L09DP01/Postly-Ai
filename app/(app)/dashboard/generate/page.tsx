@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = "force-dynamic"; // désactive le SSG
+export const revalidate = 0; 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
