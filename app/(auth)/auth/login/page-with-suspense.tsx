@@ -1,24 +1,16 @@
 "use client";
-
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
-export default function LoginPage() {
+function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [callbackUrl, setCallbackUrl] = useState("/dashboard/generate");
-
-  // Récupérer callbackUrl côté client sans useSearchParams
-  useState(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const cbUrl = urlParams.get('callbackUrl');
-      if (cbUrl) setCallbackUrl(cbUrl);
-    }
-  });
+  const params = useSearchParams();
+  const callbackUrl = params.get("callbackUrl") || "/dashboard/generate";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,8 +26,9 @@ export default function LoginPage() {
         email,
         password,
         redirect: true,
-        callbackUrl,
+        callbackUrl, // 👈 renvoie là où tu veux
       });
+      // pas besoin de gérer la suite si redirect:true
     } catch (error) {
       setError("Une erreur est survenue");
       setLoading(false);
@@ -133,3 +126,19 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-white dark:bg-gray-900 py-8 px-4 shadow sm:rounded-2xl sm:px-10 border border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2">Chargement...</span>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
