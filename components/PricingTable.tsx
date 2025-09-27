@@ -55,13 +55,13 @@ export default function PricingTable() {
   ];
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20" style={{ backgroundColor: '#03224c' }}>
+    <section className="py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl md:text-4xl mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl mb-4">
             Choisissez votre plan
           </h2>
-          <p className="text-base text-white sm:text-lg max-w-2xl mx-auto">
+          <p className="text-base text-gray-600 sm:text-lg max-w-2xl mx-auto">
             Commencez gratuitement, évoluez selon vos besoins
           </p>
         </div>
