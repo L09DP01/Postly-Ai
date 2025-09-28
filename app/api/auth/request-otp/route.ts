@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     
     // Rate limiting basique (à améliorer avec Redis en production)
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
-    console.log(`OTP request from IP: ${ip}, phone: ${phoneE164}, purpose: ${purpose}`);
+    console.log(`OTP request from IP: ${ip}, phone: ${phoneE164}, purpose: ${purpose} - Vercel deployment test`);
     
     // Normaliser numéro (si pas déjà en format E.164)
     const normalizedPhone = normalizePhone(phoneE164);
