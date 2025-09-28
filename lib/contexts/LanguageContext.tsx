@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type SupportedLanguage = 'fr' | 'en' | 'es' | 'it';
+export type SupportedLanguage = 'fr' | 'en' | 'es';
 
 export interface LanguageContextType {
   language: SupportedLanguage;
@@ -248,7 +248,6 @@ function detectBrowserLanguage(): SupportedLanguage {
   
   if (browserLang.startsWith('en')) return 'en';
   if (browserLang.startsWith('es')) return 'es';
-  if (browserLang.startsWith('it')) return 'it';
   
   return 'fr'; // Français par défaut
 }
@@ -264,7 +263,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   useEffect(() => {
     // Vérifier localStorage d'abord
     const savedLanguage = localStorage.getItem('postly-language') as SupportedLanguage;
-    if (savedLanguage && ['fr', 'en', 'es', 'it'].includes(savedLanguage)) {
+    if (savedLanguage && ['fr', 'en', 'es'].includes(savedLanguage)) {
       setLanguageState(savedLanguage);
     } else {
       // Sinon, détecter la langue du navigateur
@@ -301,7 +300,7 @@ export function useLanguage() {
 
 // Hook pour forcer une langue spécifique (pour le prompt builder)
 export function usePromptLanguage() {
-  const [promptLanguage, setPromptLanguage] = useState<SupportedLanguage>('fr');
+  const [promptLanguage, setPromptLanguage] = useState<SupportedLanguage | 'auto'>('auto');
   
   return { promptLanguage, setPromptLanguage };
 }

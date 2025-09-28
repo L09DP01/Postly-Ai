@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { PromptBuilderReqSchema, PromptBuilderResponseSchema } from "@/lib/zod-schemas";
 import { PROMPT_BUILDER_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { openai } from "@/lib/ai/openai";
+import { detectLanguageSmart } from "@/lib/detectLanguage";
+import { resolveLanguage } from "@/lib/resolveLanguage";
 
 export async function POST(req: Request) {
   try {
@@ -18,13 +20,29 @@ export async function POST(req: Request) {
 
     // Valider le body de la requête
     const body = await req.json();
-    const { intent, brief } = PromptBuilderReqSchema.parse(body);
+    const { intent, brief, description, userLanguage } = PromptBuilderReqSchema.parse(body);
 
-    // Construire le contexte pour le Prompt Builder
-    const contextPrompt = buildContextPrompt(intent, brief);
+    // 1) Détecter la langue à partir de la description ou du brief
+    const textToAnalyze = description || brief;
+    const detector = await detectLanguageSmart(textToAnalyze, userLanguage);
+    
+    // 2) Résolution finale de la langue
+    const languageResolution = resolveLanguage({
+      userChoice: userLanguage,
+      parsedLanguage: {
+        language: intent.language || null,
+        confidence: intent.language_confidence || undefined
+      },
+      detector
+    });
 
-    // Construire le prompt système avec la langue détectée
-    const systemPrompt = PROMPT_BUILDER_SYSTEM_PROMPT(intent.language || "en");
+    const finalLanguage = languageResolution.finalLanguage;
+
+    // 3) Construire le prompt système avec la langue détectée
+    const systemPrompt = PROMPT_BUILDER_SYSTEM_PROMPT(finalLanguage);
+
+    // 4) Construire le contexte pour le Prompt Builder avec la langue résolue
+    const contextPrompt = buildContextPrompt(intent, brief, finalLanguage);
 
     // Appeler GPT avec PROMPT_BUILDER_SYSTEM_PROMPT
     const completion = await openai.chat.completions.create({
@@ -34,7 +52,7 @@ export async function POST(req: Request) {
         { role: "user", content: contextPrompt },
       ],
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 1000,
     });
 
     const finalPrompt = completion.choices[0]?.message?.content?.trim();
@@ -43,6 +61,13 @@ export async function POST(req: Request) {
       throw new Error("Unable to generate prompt");
     }
 
+    // Mettre à jour l'intent avec la langue résolue
+    const updatedIntent = {
+      ...intent,
+      language: finalLanguage,
+      language_confidence: languageResolution.confidence
+    };
+
     // Valider la réponse avec Zod
     const response = PromptBuilderResponseSchema.parse({
       prompt: finalPrompt,
@@ -50,10 +75,18 @@ export async function POST(req: Request) {
         template_id: `${intent.platform || "default"}_${intent.objective || "general"}`,
         version: "2.0",
       },
-      intent,
+      intent: updatedIntent,
     });
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      ...response,
+      languageResolution: {
+        finalLanguage: languageResolution.finalLanguage,
+        isRTL: languageResolution.isRTL,
+        confidence: languageResolution.confidence,
+        method: languageResolution.method
+      }
+    });
 
   } catch (error) {
     console.error("Prompt builder error:", error);
@@ -75,9 +108,9 @@ export async function POST(req: Request) {
 /**
  * Construit le contexte complet pour le Prompt Builder adapté à la langue
  */
-function buildContextPrompt(intent: any, brief: string): string {
+function buildContextPrompt(intent: any, brief: string, language: string = "fr"): string {
   const context = [];
-  const lang = intent.language || 'fr';
+  const lang = language || 'fr';
   
   // Labels multilingues
   const labels = {

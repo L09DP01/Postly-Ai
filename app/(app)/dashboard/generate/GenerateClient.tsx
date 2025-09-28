@@ -261,9 +261,11 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
             platform: promptBuilderData.platform,
             objective: "engagement",
             tone: "professionnel",
-            language: "fr"
+            language: promptLanguage === 'auto' ? null : promptLanguage
           },
-          brief: `${promptBuilderData.brandName} - ${promptBuilderData.description}`
+          brief: `${promptBuilderData.brandName} - ${promptBuilderData.description}`,
+          description: promptBuilderData.description, // Texte pour détection de langue
+          userLanguage: promptLanguage === 'auto' ? undefined : promptLanguage
         }),
       });
 
@@ -271,6 +273,13 @@ Le prompt final doit être prêt à être utilisé et optimisé pour maximiser l
         const data = await response.json();
         setInputValue(data.prompt);
         setShowPromptBuilder(false);
+        
+        // Mettre à jour la langue détectée si disponible
+        if (data.languageResolution) {
+          setDetectedLanguage(data.languageResolution.finalLanguage);
+          setIsRTL(data.languageResolution.isRTL);
+        }
+        
         // Reset form
         setPromptBuilderData({ brandName: "", description: "", platform: "instagram" });
       }

@@ -1,7 +1,14 @@
 "use client";
 
 import React from 'react';
-import { isRTLLanguage } from '@/lib/detectLanguage';
+// Fonction locale pour détecter les langues RTL
+const RTL_LANGUAGES = new Set([
+  "ar", "fa", "he", "ur", "ku", "ps", "sd", "dv", "yi"
+]);
+
+function isRTLLanguage(language: string): boolean {
+  return RTL_LANGUAGES.has(language.split("-")[0]);
+}
 
 interface RTLContainerProps {
   language: string;

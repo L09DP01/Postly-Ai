@@ -9,23 +9,23 @@ export const ConstraintsSchema = z.object({
 
 // Schéma pour l'intent parsé
 export const IntentSchema = z.object({
-  platform: z.enum(["instagram", "facebook", "tiktok", "linkedin", "x"]).optional(),
+  platform: z.enum(["instagram", "facebook", "tiktok", "linkedin", "x"]).nullable().optional(),
   industry: z.enum([
     "restaurant", "beauté", "éducation", "e-commerce", "santé", 
     "technologie", "mode", "sport", "voyage", "immobilier", 
     "finance", "autre"
-  ]).optional(),
+  ]).nullable().optional(),
   objective: z.enum([
     "promo", "fidélisation", "trafic", "recrutement", 
     "storytelling", "engagement", "vente", "branding"
-  ]).optional(),
+  ]).nullable().optional(),
   tone: z.enum([
     "professionnel", "décontracté", "vendeur", "inspirant", 
     "humoristique", "chaleureux", "urgent", "confiant"
-  ]).optional(),
+  ]).nullable().optional(),
   language: z.string().nullable().optional(), // Code BCP-47 (ex: "fr", "en", "pt-BR", "ar")
   language_confidence: z.number().min(0).max(1).nullable().optional(), // Confiance 0-1
-  audience: z.string().optional(),
+  audience: z.string().nullable().optional(),
   constraints: ConstraintsSchema.optional().nullable(),
 });
 
@@ -39,6 +39,8 @@ export const ParseIntentReqSchema = z.object({
 export const PromptBuilderReqSchema = z.object({
   intent: IntentSchema,
   brief: z.string().min(3, "Le brief doit contenir au moins 3 caractères"),
+  description: z.string().optional(), // Description du prompt builder
+  userLanguage: z.string().optional(), // Langue choisie par l'utilisateur
 });
 
 // Schéma pour la requête de génération
