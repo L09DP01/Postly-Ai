@@ -7,15 +7,23 @@ import { authOptions } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, code } = await req.json();
+    const { phoneE164, code, purpose } = await req.json();
     
-    const phoneE164 = normalizePhone(phone);
+    // Normaliser numéro (si pas déjà en format E.164)
+    const normalizedPhone = normalizePhone(phoneE164);
     const codeHash = hashOtp(code);
 
+    // Debug: Log des paramètres reçus
+    console.log('🔍 Debug OTP Verify - Paramètres:', {
+      phoneE164: normalizedPhone,
+      purpose,
+      codeLength: code?.length
+    });
+
     // Rechercher OTP valide
-    const otpChallenge = await prisma.otpChallenge.findFirst({
+    const otpChallenge = await (prisma as any).otpChallenge.findFirst({
       where: {
-        phoneE164,
+        phoneE164: normalizedPhone,
         codeHash,
         consumed: false,
         expiresAt: { gt: new Date() }
@@ -28,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Marquer OTP comme consommé
-    await prisma.otpChallenge.update({
+    await (prisma as any).otpChallenge.update({
       where: { id: otpChallenge.id },
       data: { consumed: true }
     });
@@ -41,21 +49,21 @@ export async function POST(req: NextRequest) {
         // Créer nouvel utilisateur
         user = await prisma.user.create({
           data: {
-            waPhoneE164: phoneE164,
-            waUserId: phoneE164,
+            waPhoneE164: normalizedPhone,
+            waUserId: normalizedPhone,
             credits: 5, // Crédits gratuits pour nouveaux utilisateurs
             waLinkedAt: new Date(),
             waPreferredLang: 'fr'
-          }
+          } as any
         });
       } else {
         // Lier numéro existant
         await prisma.user.update({
           where: { id: user.id },
           data: {
-            waPhoneE164: phoneE164,
+            waPhoneE164: normalizedPhone,
             waLinkedAt: new Date()
-          }
+          } as any
         });
       }
 
@@ -79,9 +87,9 @@ export async function POST(req: NextRequest) {
       await prisma.user.update({
         where: { id: otpChallenge.userId },
         data: {
-          waPhoneE164: phoneE164,
+          waPhoneE164: normalizedPhone,
           waLinkedAt: new Date()
-        }
+        } as any
       });
 
       return NextResponse.json({
