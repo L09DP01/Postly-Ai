@@ -7,6 +7,14 @@ export async function POST(req: NextRequest) {
   try {
     const { phoneE164, purpose, userId } = await req.json();
     
+    // Debug: Log des variables d'environnement
+    console.log('🔍 Debug OTP API - Variables d\'environnement:');
+    console.log('  WHATSAPP_PROVIDER:', process.env.WHATSAPP_PROVIDER || 'NON DÉFINI');
+    console.log('  TWILIO_ACCOUNT_SID:', process.env.TWILIO_ACCOUNT_SID ? 'DÉFINI' : 'NON DÉFINI');
+    console.log('  TWILIO_AUTH_TOKEN:', process.env.TWILIO_AUTH_TOKEN ? 'DÉFINI' : 'NON DÉFINI');
+    console.log('  TWILIO_WHATSAPP_FROM:', process.env.TWILIO_WHATSAPP_FROM || 'NON DÉFINI');
+    console.log('  OTP_SALT:', process.env.OTP_SALT ? 'DÉFINI' : 'NON DÉFINI');
+    
     // Rate limiting basique (à améliorer avec Redis en production)
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     console.log(`OTP request from IP: ${ip}, phone: ${phoneE164}, purpose: ${purpose}`);
