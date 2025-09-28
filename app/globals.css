@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Styles globaux simples */
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #ffffff;
+  color: #111827;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #111827;
+    color: #f9fafb;
+  }
+}

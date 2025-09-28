@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /billing/
+Disallow: /api/
+
+# Host
+Host: https://postly-ai.vercel.app
+
+# Sitemaps
+Sitemap: https://postly-ai.vercel.app/sitemap.xml
