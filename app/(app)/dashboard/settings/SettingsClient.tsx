@@ -12,6 +12,7 @@ export default function SettingsClient() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [otpSent, setOtpSent] = useState(false);
 
   useEffect(() => {
     fetchUserProfile();
@@ -59,6 +60,7 @@ export default function SettingsClient() {
 
       if (response.ok) {
         setMessage("✅ Code de vérification envoyé sur WhatsApp ! Entrez le code ci-dessous.");
+        setOtpSent(true);
       } else {
         setMessage(`❌ Erreur: ${data.error}`);
       }
@@ -91,6 +93,7 @@ export default function SettingsClient() {
 
       if (response.ok) {
         setMessage("🎉 WhatsApp lié avec succès ! Vos crédits sont maintenant synchronisés.");
+        setOtpSent(false); // Réinitialiser l'état
         await fetchUserProfile(); // Recharger le profil
       } else {
         setMessage(`❌ Erreur: ${data.error}`);
@@ -152,28 +155,58 @@ export default function SettingsClient() {
         <h2 className="text-xl font-semibold mb-4 text-gray-900">Lier votre compte WhatsApp</h2>
         
         {!userProfile?.waPhoneE164 ? (
-          <form onSubmit={handleLinkWhatsApp} className="space-y-4">
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium mb-2 text-gray-900">
-                Numéro WhatsApp (format international)
-              </label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+50940035664"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-              <p className="text-sm text-gray-700 mt-1">
-                Format: +[code pays][numéro] (ex: +50940035664 pour Haïti)
-              </p>
-            </div>
-            
-            <Button type="submit" disabled={loading}>
-              {loading ? "Envoi en cours..." : "Envoyer le code de vérification"}
-            </Button>
-          </form>
+          <div className="space-y-4">
+            {!otpSent ? (
+              <form onSubmit={handleLinkWhatsApp} className="space-y-4">
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium mb-2 text-gray-900">
+                    Numéro WhatsApp (format international)
+                  </label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+50940035664"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                  />
+                  <p className="text-sm text-gray-700 mt-1">
+                    Format: +[code pays][numéro] (ex: +50940035664 pour Haïti)
+                  </p>
+                </div>
+                
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Envoi en cours..." : "Envoyer le code de vérification"}
+                </Button>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-blue-800 font-medium mb-3">
+                    Un code de vérification a été envoyé à {phoneNumber} sur WhatsApp.
+                  </p>
+                  <form onSubmit={handleVerifyOTP} className="space-y-4">
+                    <div>
+                      <label htmlFor="otp" className="block text-sm font-medium mb-2 text-gray-900">
+                        Entrez le code de vérification reçu sur WhatsApp
+                      </label>
+                      <Input
+                        id="otp"
+                        type="text"
+                        placeholder="123456"
+                        maxLength={6}
+                        required
+                      />
+                    </div>
+                    
+                    <Button type="submit" disabled={loading}>
+                      {loading ? "Vérification en cours..." : "Vérifier le code"}
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <div className="space-y-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -184,25 +217,6 @@ export default function SettingsClient() {
                 Vos crédits sont synchronisés entre le site web et WhatsApp.
               </p>
             </div>
-            
-            <form onSubmit={handleVerifyOTP} className="space-y-4">
-              <div>
-                <label htmlFor="otp" className="block text-sm font-medium mb-2 text-gray-900">
-                  Entrez le code de vérification reçu sur WhatsApp
-                </label>
-                <Input
-                  id="otp"
-                  type="text"
-                  placeholder="123456"
-                  maxLength={6}
-                  required
-                />
-              </div>
-              
-              <Button type="submit" disabled={loading}>
-                {loading ? "Vérification..." : "Vérifier le code"}
-              </Button>
-            </form>
           </div>
         )}
 
