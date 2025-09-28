@@ -25,7 +25,19 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const body = await req.json();
+    // Parser le body selon le content-type
+    let body;
+    const contentType = req.headers.get('content-type') || '';
+    
+    if (contentType.includes('application/json')) {
+      body = await req.json();
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+      const formData = await req.formData();
+      body = Object.fromEntries(formData.entries());
+    } else {
+      return NextResponse.json({ error: 'Unsupported content type' }, { status: 400 });
+    }
+    
     const { message, from, to } = provider === 'twilio' 
       ? parseTwilioWebhook(body)
       : parseMetaWebhook(body);
