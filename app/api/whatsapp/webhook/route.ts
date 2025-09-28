@@ -50,20 +50,50 @@ export async function POST(req: NextRequest) {
     const phoneE164 = normalizePhone(from);
     
     // Rechercher utilisateur
-    let user = await prisma.user.findUnique({
-      where: { waPhoneE164: phoneE164 }
+    let user = await prisma.user.findFirst({
+      where: { waPhoneE164: phoneE164 } as any
     });
 
-    // Si pas d'utilisateur, créer un compte temporaire
+    // Si pas d'utilisateur, créer un compte temporaire avec 10 crédits gratuits
+    let isNewUser = false;
     if (!user) {
+      isNewUser = true;
       user = await prisma.user.create({
         data: {
           waPhoneE164: phoneE164,
           waUserId: phoneE164, // ID temporaire
-          credits: 0, // Pas de crédits gratuits pour les nouveaux utilisateurs WA
+          credits: 10, // 10 crédits gratuits comme sur le site web
           waPreferredLang: 'fr'
+        } as any
+      });
+      
+      // Enregistrer l'attribution des crédits gratuits dans le ledger
+      await (prisma as any).creditLedger.create({
+        data: {
+          userId: user.id,
+          delta: 10,
+          reason: 'whatsapp_signup_bonus'
         }
       });
+      
+      // Envoyer message de bienvenue
+      const welcomeMessage = `🎉 *Bienvenue sur Postly-AI !*
+
+✅ Votre compte WhatsApp a été créé avec succès !
+🎁 Vous recevez *10 générations gratuites* pour commencer
+
+*Pour commencer, tapez:*
+• *HELP* - Voir toutes les commandes
+• *GEN [votre demande]* - Générer un post
+• *BALANCE* - Voir vos crédits
+
+*Exemple:*
+GEN Crée un post Instagram pour promouvoir ma nouvelle boutique
+
+💡 Postly-AI génère des posts optimisés pour tous vos réseaux sociaux !`;
+      
+      await sendWhatsAppMessage(phoneE164, welcomeMessage);
+      return NextResponse.json({ success: true });
     }
 
     // Router les commandes
@@ -100,9 +130,11 @@ export async function POST(req: NextRequest) {
 async function handleHelp(phoneE164: string) {
   const helpMessage = `🤖 *Postly-AI - Aide*
 
+🎉 *Bienvenue ! Vous avez 10 générations gratuites*
+
 *Commandes disponibles:*
 • *HELP* - Afficher cette aide
-• *BALANCE* - Voir vos crédits
+• *BALANCE* - Voir vos crédits restants
 • *LOGIN* - Lier votre compte web
 • *GEN [votre texte]* - Générer des posts
 • *LANG* - Changer la langue
@@ -110,7 +142,8 @@ async function handleHelp(phoneE164: string) {
 *Exemple:*
 GEN Crée un post promo pour Instagram sur ma nouvelle collection de vêtements
 
-💡 Tapez simplement votre demande de post pour une génération automatique !`;
+💡 Tapez simplement votre demande de post pour une génération automatique !
+🆓 10 générations gratuites incluses avec votre compte WhatsApp`;
 
   await sendWhatsAppMessage(phoneE164, helpMessage);
   return NextResponse.json({ success: true });
@@ -190,27 +223,27 @@ async function handleGeneration(user: any, brief: string, phoneE164: string) {
     const promptResponse = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: PROMPT_BUILDER_SYSTEM_PROMPT(detector.language) },
+        { role: "system", content: PROMPT_BUILDER_SYSTEM_PROMPT(detector.language || 'en') },
         { role: "user", content: `BRIEF: "${brief}"\nINTENT: ${JSON.stringify(intent)}` }
       ],
       temperature: 0.7,
       max_tokens: 500
     });
 
-    const prompt = promptResponse.choices[0]?.message?.content;
+    const prompt = promptResponse.choices[0]?.message?.content || '';
 
     // 3. Generate
     const generateResponse = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: GENERATE_SYSTEM_PROMPT(detector.language) },
+        { role: "system", content: GENERATE_SYSTEM_PROMPT(detector.language || 'en') },
         { role: "user", content: prompt }
       ],
       temperature: 0.7,
       max_tokens: 1000
     });
 
-    const content = generateResponse.choices[0]?.message?.content;
+    const content = generateResponse.choices[0]?.message?.content || '';
     const variants = splitTo3Variants(content);
 
     // Décrémenter crédit en transaction
@@ -232,7 +265,7 @@ async function handleGeneration(user: any, brief: string, phoneE164: string) {
         industry: intent.industry,
         objective: intent.objective,
         tone: intent.tone,
-        language: detector.language,
+        language: detector.language || 'en',
         promptFinal: prompt,
         variants,
         usageTokens: generateResponse.usage?.total_tokens || 0

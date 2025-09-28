@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma';
 export async function requireCredits(userId: string, amount: number = 1): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { credits: true }
-  });
+    select: { credits: true } as any
+  }) as any;
   
   return user ? user.credits >= amount : false;
 }
@@ -18,8 +18,8 @@ export async function decrementWithLedgerTX(
     // Vérifier crédits disponibles
     const user = await tx.user.findUnique({
       where: { id: userId },
-      select: { credits: true }
-    });
+      select: { credits: true } as any
+    }) as any;
 
     if (!user || user.credits < amount) {
       throw new Error('Insufficient credits');
@@ -28,11 +28,11 @@ export async function decrementWithLedgerTX(
     // Décrémenter crédits
     await tx.user.update({
       where: { id: userId },
-      data: { credits: { decrement: amount } }
+      data: { credits: { decrement: amount } } as any
     });
 
     // Enregistrer dans ledger
-    await tx.creditLedger.create({
+    await (tx as any).creditLedger.create({
       data: {
         userId,
         delta: -amount,
@@ -51,11 +51,11 @@ export async function incrementWithLedgerTX(
     // Incrémenter crédits
     await tx.user.update({
       where: { id: userId },
-      data: { credits: { increment: amount } }
+      data: { credits: { increment: amount } } as any
     });
 
     // Enregistrer dans ledger
-    await tx.creditLedger.create({
+    await (tx as any).creditLedger.create({
       data: {
         userId,
         delta: amount,

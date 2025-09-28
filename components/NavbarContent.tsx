@@ -72,6 +72,16 @@ export default function NavbarContent() {
               >
                 {t('nav.billing')}
               </Link>
+              <Link
+                href="/dashboard/settings"
+                className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                  isActiveRoute("/dashboard/settings")
+                    ? "border-blue-600 text-black"
+                    : "border-transparent text-gray-700 hover:border-blue-400 hover:text-black"
+                }`}
+              >
+                ⚙️ Paramètres
+              </Link>
             </div>
           </div>
           
@@ -157,6 +167,17 @@ export default function NavbarContent() {
                 }`}
               >
                 {t('nav.billing')}
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActiveRoute("/dashboard/settings")
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              >
+                ⚙️ Paramètres
               </Link>
               
               {/* Mobile Language Selector */}
