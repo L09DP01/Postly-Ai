@@ -84,6 +84,32 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Session invalide' }, { status: 400 });
       }
 
+      // Vérifier si le numéro est déjà utilisé par un autre utilisateur
+      const existingUser = await prisma.user.findFirst({
+        where: { 
+          waPhoneE164: normalizedPhone,
+          id: { not: otpChallenge.userId } // Exclure l'utilisateur actuel
+        }
+      });
+
+      if (existingUser) {
+        return NextResponse.json({ 
+          error: 'Ce numéro WhatsApp est déjà associé à un autre compte' 
+        }, { status: 400 });
+      }
+
+      // Vérifier si l'utilisateur actuel a déjà un numéro WhatsApp
+      const currentUser = await prisma.user.findUnique({
+        where: { id: otpChallenge.userId },
+        select: { waPhoneE164: true }
+      });
+
+      if (currentUser?.waPhoneE164) {
+        return NextResponse.json({ 
+          error: 'Votre compte est déjà lié à un numéro WhatsApp' 
+        }, { status: 400 });
+      }
+
       await prisma.user.update({
         where: { id: otpChallenge.userId },
         data: {
