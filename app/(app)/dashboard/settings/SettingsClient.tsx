@@ -50,7 +50,8 @@ export default function SettingsClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phoneE164: phoneNumber,
-          purpose: "LINK"
+          purpose: "LINK",
+          userId: userProfile?.id
         }),
       });
 

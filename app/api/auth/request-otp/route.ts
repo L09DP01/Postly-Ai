@@ -5,19 +5,19 @@ import { sendWhatsAppMessage, normalizePhone } from '@/lib/wa';
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, phone } = await req.json();
+    const { phoneE164, purpose, userId } = await req.json();
     
     // Rate limiting basique (à améliorer avec Redis en production)
-    const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown';
-    console.log(`OTP request from IP: ${ip}`);
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    console.log(`OTP request from IP: ${ip}, phone: ${phoneE164}, purpose: ${purpose}`);
     
-    // Normaliser numéro
-    const phoneE164 = normalizePhone(phone);
+    // Normaliser numéro (si pas déjà en format E.164)
+    const normalizedPhone = normalizePhone(phoneE164);
     
     // Vérifier si un OTP existe déjà non consommé
-    const existingOtp = await prisma.otpChallenge.findFirst({
+    const existingOtp = await (prisma as any).otpChallenge.findFirst({
       where: {
-        phoneE164,
+        phoneE164: normalizedPhone,
         consumed: false,
         expiresAt: { gt: new Date() }
       }
@@ -35,12 +35,12 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
     // Sauvegarder OTP
-    await prisma.otpChallenge.create({
+    await (prisma as any).otpChallenge.create({
       data: {
-        userId,
-        phoneE164,
+        userId: userId || null,
+        phoneE164: normalizedPhone,
         codeHash,
-        purpose: userId ? 'LINK' : 'LOGIN',
+        purpose: purpose || 'LOGIN',
         expiresAt
       }
     });
@@ -48,9 +48,9 @@ export async function POST(req: NextRequest) {
     // Envoyer OTP via WhatsApp
     const message = `🔐 Votre code de vérification Postly-AI: *${otp}*\n\n⏰ Valide 10 minutes\n🛡️ Ne partagez jamais ce code`;
     
-    await sendWhatsAppMessage(phoneE164, message);
+    await sendWhatsAppMessage(normalizedPhone, message);
 
-    console.log(`OTP sent to ${phoneE164}: ${otp}`); // Log en développement seulement
+    console.log(`OTP sent to ${normalizedPhone}: ${otp}`); // Log en développement seulement
 
     return NextResponse.json({ 
       success: true,
