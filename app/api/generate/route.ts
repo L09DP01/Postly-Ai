@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { GenerationReqSchema, GenerateResponseSchema } from "@/lib/zod-schemas";
 import { requireUserWithQuota, incrementUserGeneration } from "@/lib/rate-limit";
-import { openai } from "@/lib/ai/openai";
+import { getOpenAI } from "@/lib/ai/openai";
 import { GENERATE_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { prisma } from "@/lib/prisma";
 
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
     );
 
     // Appel à OpenAI pour générer les variantes
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {

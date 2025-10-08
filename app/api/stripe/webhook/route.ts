@@ -4,11 +4,26 @@ import Stripe from "stripe";
 import { updateUserPlan } from "@/lib/rate-limit";
 import { prisma } from "@/lib/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-27.basil" as any,
-});
+let stripe: Stripe | null = null;
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+function getStripe(): Stripe {
+  if (!stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-08-27.basil" as any,
+    });
+  }
+  return stripe;
+}
+
+const getEndpointSecret = () => {
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+  }
+  return process.env.STRIPE_WEBHOOK_SECRET;
+};
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -22,7 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing stripe signature" }, { status: 400 });
     }
 
-    event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
+    event = getStripe().webhooks.constructEvent(body, signature, getEndpointSecret());
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { openai } from "@/lib/ai/openai";
+import { getOpenAI } from "@/lib/ai/openai";
 import { PARSE_INTENT_SYSTEM_PROMPT } from "@/lib/ai/prompts";
 import { ParseIntentReqSchema, IntentSchema } from "@/lib/zod-schemas";
 import { detectLanguageSmart } from "@/lib/detectLanguage";
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const detector = await detectLanguageSmart(brief, userLanguage);
     
     // 2) Parsing de l'intent par l'IA
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: PARSE_INTENT_SYSTEM_PROMPT },

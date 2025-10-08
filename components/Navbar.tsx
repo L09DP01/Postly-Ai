@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import logo from "@/public/logo.png"
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,11 +12,9 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <img 
-            src={logo.src} 
-            alt="Postly AI" 
-            className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg object-contain"
-          />
+          <div className="h-10 w-10 sm:h-10 sm:w-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-bold text-xl">
+            P
+          </div>
           <span className="font-bold text-lg sm:text-xl text-gray-800">Postly AI</span>
         </Link>
         

@@ -1,5 +1,5 @@
 import { franc } from "franc";
-import { openai } from "./ai/openai";
+import { getOpenAI } from "./ai/openai";
 
 // Mapping ISO 639-3 → ISO 639-1/BCP-47
 const ISO6393_TO_1: Record<string, string> = {
@@ -102,7 +102,7 @@ function toBCP47(iso1: string, region?: string): string | null {
  */
 async function detectWithLLM(text: string): Promise<{ lang: string | null; conf: number }> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
